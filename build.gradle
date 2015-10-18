@@ -1,0 +1,126 @@
+// -*- coding: utf-8; mode: groovy -*-
+
+
+buildscript {
+    ext {
+        springBootVersion = '1.2.6.RELEASE'
+    }
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "http://repo.spring.io/release" }
+        maven { url 'https://dl.bintray.com/sothmann/gradle-plugins' }
+    }
+    dependencies {
+        classpath "jp.classmethod.aws:gradle-aws-plugin:0.21"
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath 'de.richsource.gradle.plugins:typescript-gradle-plugin:1.5'
+    }
+}
+
+apply plugin: 'jp.classmethod.aws'
+
+aws {
+    profileName = 'bassar'
+    region = 'us-west-2'
+}
+
+subprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'spring-boot'
+
+    //Encoding
+    def defaultEncoding = 'UTF-8'
+    [compileJava, compileTestJava]*.options*.encoding = defaultEncoding
+
+    //Java Version
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    //プロジェクトのバージョン
+    version = '0.0.1-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+
+    //ソースディレクトリ設定
+    sourceSets {
+        generated {
+            java {
+                srcDirs = ['src/main/generated/']
+            }
+        }
+        main {
+            resources {
+                srcDirs = ['src/main/resources']
+            }
+        }
+    }
+
+    //設定ファイルの切り替え(本番用・テストサーバ用)
+    def environment = project.hasProperty('env') ? env : 'dev'
+
+    if (environment.equals('prod'))
+        sourceSets.main.resources.srcDirs 'src/main/resources/production'
+    else
+        sourceSets.main.resources.srcDirs 'src/main/resources/development'
+
+    println "Target environment: $environment"
+
+
+
+    dependencies {
+
+        compile('com.amazonaws:aws-lambda-java-core:1.0.0')
+
+        //Spring boot
+        testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+
+        // util
+        compile("com.google.guava:guava:18.0")
+
+    }
+
+    //各種ディレクトリ生成
+    task mkdirs << {
+        ["src/main/generated", "src/main/java", "src/main/resources", "src/test/java", "src/test/resources"].each {
+            def path = "${projectDir}/${it}"
+            ant.mkdir(dir: path)
+            ant.touch(file: "${path}/.gitkeep")
+        }
+    }
+
+    jar {
+        into('lib') {
+            from configurations.compile
+        }
+    }
+
+    javadoc {
+        failOnError false
+    }
+
+}
+group = "com.makotan.libs.lambda.wing"
+
+project(':sample/sample1') {
+    apply plugin: "base"
+    apply plugin: "jp.classmethod.aws.lambda"
+
+    lambda {
+        region = "us-west-2"
+    }
+    compileJava {
+        options.compilerArgs << "-Xlint:deprecation"
+    }
+
+    task zip(type: Zip) {
+        from "sample"
+        destinationDir file("build")
+    }
+
+}

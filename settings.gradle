@@ -1,0 +1,8 @@
+rootProject.name = 'lambda-wing'
+
+include 'core'
+include 'test'
+include 'annotation'
+include 'tool:shared'
+include 'tool:cli'
+include 'sample/sample1'
