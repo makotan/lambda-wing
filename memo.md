@@ -72,16 +72,38 @@ TODO:書き足す
 ある程度のカスタマイズはOKだけどroleが割り当てられないとエラーになる事に注意  
 1234567890の所は自分のユーザIDを設定する  
 
-## lambda functionの更新
+## lambda functionの作成
 ```
 gradle :sample/sample1:jar
 aws lambda  --profile bassar --region us-west-2 delete-function --function-name sample1
 aws lambda  --profile bassar --region us-west-2 create-function --function-name sample1 --runtime java8 --role arn:aws:iam::1234567890:role/lambda-poweruser --handler com.makotan.libs.lambda.wing.sample.Sample01 --zip-file fileb://sample/sample1/build/libs/sample/sample1-0.0.1-SNAPSHOT.jar --timeout 15 --memory-size 512
 ```
 
+## lambda functionの更新
+```
+gradle :sample/sample1:jar
+aws lambda  --profile bassar --region us-west-2 update-function-code --function-name sample1 --zip-file  fileb://sample/sample1/build/libs/sample/sample1-0.0.1-SNAPSHOT.jar
+```
+
+## lambda functionの削除
+このコマンドを実行するとバージョンも含めて削除される
+
+```
+aws lambda  --profile bassar --region us-west-2 delete-function --function-name sample1
+```
+
+
+
 TODO：書き足す&S3経由のサンプルを追加
 
 ## lambda functionの実行
 ```
-aws lambda  --profile bassar --region us-west-2 invoke --function-name sample1 --invocation-type RequestResponse --log-type Tail --payload '{"value": 5}' output.txt
+aws lambda  --profile bassar --region us-west-2 invoke --function-name sample1 --invocation-type RequestResponse  --payload '{"value": 5}' output.txt
+```
+
+バージョン指定するときの実行方法  
+PRODとか数値のバージョン番号とか任意のが使える  
+
+```
+aws lambda  --profile bassar --region us-west-2 invoke --function-name sample1 --invocation-type RequestResponse --qualifier PROD --payload '{"value": 5}' output.txt
 ```
