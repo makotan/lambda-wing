@@ -34,23 +34,25 @@ public class ConfigLoader {
         }
     }
 
-    void loadFunctionProperties(String prefix, String functionName , String functionVersion) {
-        loadFromResource(prefix+"application.properties");
-        loadFromResource(prefix+"application_"+functionVersion+".properties");
-        loadFromResource(prefix+functionName+".properties");
-        loadFromResource(prefix+functionName+"_"+functionVersion+".properties");
-
+    boolean loadFunctionProperties(String prefix, String functionName , String functionVersion) {
+        boolean ret = loadFromResource(prefix+"application.properties");
+        ret = ret | loadFromResource(prefix+"application_"+functionVersion+".properties");
+        ret = ret | loadFromResource(prefix+functionName+".properties");
+        ret = ret | loadFromResource(prefix+functionName+"_"+functionVersion+".properties");
+        return ret;
     }
 
-    void loadFromResource(String name) {
+    boolean loadFromResource(String name) {
         try (InputStream inputStream = Object.class.getResourceAsStream(name)) {
             if (inputStream == null) {
-                return;
+                return false;
             }
             properties.load(inputStream);
             inputStream.close();
+            return true;
         } catch (IOException e) {
             System.out.println( ConfigLoader.class.getName() + " not load " + name + " " + e.toString());
+            return false;
         }
     }
 
