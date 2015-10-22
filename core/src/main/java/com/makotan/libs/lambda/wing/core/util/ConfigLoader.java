@@ -6,7 +6,25 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 
 /**
- * Created by makotan on 2015/10/21.
+ * ConfigLoader<p/>
+ * functionNameとバージョン(alias)を元にconfigファイルを読み込んで設定する<br>
+ * Handlerでの初期化方法はHandlerのクラスで↓を記述。あとは普通のpropertiesとして操作可能<br>
+ * <code>
+ *     final Properties properties = ConfigLoader.getInstance().getProperties();
+ * </code>
+ * <p/>
+ * UnitTestで書くときはこんな感じにすると、ConfigLoaderTestの設定をfunction"func"でバージョンは"test"(これは固定)として読込<br>
+ *
+ * <code>
+ *     ConfigLoader loader = new ConfigLoader(ConfigLoaderTest.class,"func");
+ * </code>
+ * 読込のルール<p/>
+ * <pre>
+ *     /application.properties
+ *     /application_version..properties
+ *     /function.properties
+ *     /function_version..properties
+ * </pre>
  */
 public class ConfigLoader {
     static ConfigLoader instance = new ConfigLoader();
@@ -23,22 +41,40 @@ public class ConfigLoader {
     public ConfigLoader(Class<?> testClass , String functionName) {
         loadFunctionProperties("/" ,functionName , "test");
         if (testClass != null) {
-            String name = testClass.getCanonicalName();
-            loadFunctionProperties("/" + name + "/", functionName, "test");
+            loadFunctionProperties(classNameToPath(testClass), functionName, "test");
 
-            name = testClass.getCanonicalName().replaceAll("\\.", "/");
-            loadFunctionProperties("/" + name + "/", functionName, "test");
+            loadFunctionProperties(classNameToSlashPath(testClass), functionName, "test");
 
-            name = testClass.getPackage().getName() + "/" + testClass.getSimpleName();
-            loadFunctionProperties("/" + name + "/", functionName, "test");
+            loadFunctionProperties(classNameToPackageAndSlashPath(testClass), functionName, "test");
         }
+    }
+
+    String classNameToPath(Class<?> testClass) {
+        String name = testClass.getCanonicalName();
+        return "/" + name + "/";
+    }
+
+    String classNameToSlashPath(Class<?> testClass) {
+        String name = testClass.getCanonicalName().replaceAll("\\.", "/");
+        return "/" + name + "/";
+    }
+
+    String classNameToPackageAndSlashPath(Class<?> testClass) {
+        String name = testClass.getPackage().getName() + "/" + testClass.getSimpleName();
+        return "/" + name + "/";
     }
 
     boolean loadFunctionProperties(String prefix, String functionName , String functionVersion) {
         boolean ret = loadFromResource(prefix+"application.properties");
-        ret = ret | loadFromResource(prefix+"application_"+functionVersion+".properties");
-        ret = ret | loadFromResource(prefix+functionName+".properties");
-        ret = ret | loadFromResource(prefix+functionName+"_"+functionVersion+".properties");
+        if (functionVersion != null && ! functionVersion.isEmpty()) {
+            ret = ret | loadFromResource(prefix + "application_" + functionVersion + ".properties");
+        }
+        if (functionName != null && ! functionName.isEmpty()) {
+            ret = ret | loadFromResource(prefix + functionName + ".properties");
+            if (functionVersion != null && ! functionVersion.isEmpty()) {
+                ret = ret | loadFromResource(prefix + functionName + "_" + functionVersion + ".properties");
+            }
+        }
         return ret;
     }
 
@@ -54,6 +90,10 @@ public class ConfigLoader {
             System.out.println( ConfigLoader.class.getName() + " not load " + name + " " + e.toString());
             return false;
         }
+    }
+
+    public static ConfigLoader getInstance() {
+        return instance;
     }
 
     public Properties getProperties() {

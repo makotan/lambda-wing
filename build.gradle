@@ -124,3 +124,18 @@ project(':sample/sample1') {
     }
 
 }
+
+project(':tool/shared') {
+
+    dependencies {
+        compile("org.springframework.boot:spring-boot-starter")
+        testCompile("org.springframework.boot:spring-boot-starter-test")
+        compile('args4j:args4j:2.32')
+
+        // util
+        compile("'org.reflections:reflections:0.9.10'")
+
+    }
+
+
+}

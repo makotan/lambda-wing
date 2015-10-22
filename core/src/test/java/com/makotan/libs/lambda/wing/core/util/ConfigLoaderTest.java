@@ -29,9 +29,10 @@ public class ConfigLoaderTest {
         ConfigLoader loader = new ConfigLoader(null,"test");
         loader.getProperties().clear();
         String path = "/" + this.getClass().getCanonicalName().replaceAll("\\.", "/") + "/" + "loadTest" + "/";
-        loader.loadFunctionProperties(path,"loadFunc","");
+        loader.loadFunctionProperties(path,"loadFunc","test");
         assertFalse(loader.getProperties().isEmpty());
         assertThat(loader.getProperties().getProperty("test.value"), is("test"));
+        assertThat(loader.getProperties().getProperty("load.test.prop"), is("test"));
     }
 
 
