@@ -23,7 +23,7 @@ public class RegisterLambdaHandler {
     Logger logger = LoggerFactory.getLogger(getClass());
     // aws lambda  --profile bassar --region us-west-2 create-function --function-name sample1 --runtime java8 --role arn:aws:iam::1234567890:role/lambda-poweruser --handler com.makotan.libs.lambda.wing.sample.Sample01 --zip-file fileb://sample/sample1/build/libs/sample/sample1-0.0.1-SNAPSHOT.jar --timeout 15 --memory-size 512
 
-    public class RegistInfo {
+    public static class RegisterInfo {
         public String profile;
         public String region;
         public String functionName;
@@ -35,8 +35,8 @@ public class RegisterLambdaHandler {
         public String s3Key;
         public boolean publishVersion;
 
-        public RegistInfo copy() {
-            RegistInfo info = new RegistInfo();
+        public RegisterInfo copy() {
+            RegisterInfo info = new RegisterInfo();
             info.profile = profile;
             info.region = region;
             info.role = role;
@@ -48,7 +48,7 @@ public class RegisterLambdaHandler {
 
         @Override
         public String toString() {
-            return "RegitInfo{" +
+            return "RegisterInfo{" +
                     "profile='" + profile + '\'' +
                     ", region='" + region + '\'' +
                     ", functionName='" + functionName + '\'' +
@@ -63,20 +63,20 @@ public class RegisterLambdaHandler {
         }
     }
 
-    public class RegistResult {
+    public static class RegisterResult {
         public Method method;
         public GetFunctionResult result;
     }
 
-    public List<RegistResult> regist(RegistInfo info , Set<Method> methodSet) {
+    public List<RegisterResult> register(RegisterInfo info, Set<Method> methodSet) {
         AWSLambda awsLambda = getAWSLambda(info);
         return methodSet.stream()
                 .map(m -> {
-                    RegistResult result = new RegistResult();
+                    RegisterResult result = new RegisterResult();
                     result.method = m;
                     try {
-                        RegistInfo ri = createRegistInfo(info,m);
-                        result.result = registLambda(ri, awsLambda);
+                        RegisterInfo ri = createRegisterInfo(info, m);
+                        result.result = registerLambda(ri, awsLambda);
                     } catch (Exception e) {
                         result.result = null;
                     }
@@ -84,25 +84,26 @@ public class RegisterLambdaHandler {
                 }).collect(Collectors.toList());
     }
 
-    RegistInfo createRegistInfo(RegistInfo info , Method method) {
-        RegistInfo ri = info.copy();
-        LambdaHandler lambdaHandler = method.getDeclaredAnnotation(LambdaHandler.class);
-        ri.functionName = lambdaHandler.value();
+    RegisterInfo createRegisterInfo(RegisterInfo info, Method method) {
+        RegisterInfo ri = info.copy();
+        LambdaHandler lambdaHandler = method.getAnnotation(LambdaHandler.class);
+        String funcName = lambdaHandler.value().isEmpty() ? method.getName() : lambdaHandler.value();
+        ri.functionName = funcName;
         ri.timeout = lambdaHandler.time();
         ri.memory = lambdaHandler.mem();
         ri.handler = method.getDeclaringClass().getCanonicalName() + ":" + method.getName();
         return ri;
     }
 
-    AWSLambda getAWSLambda(RegistInfo info) {
+    AWSLambda getAWSLambda(RegisterInfo info) {
         AWSLambda lambda = new AWSLambdaClient(new ToolAWSCredentialsProviderChain(info.profile));
         lambda.setRegion(Region.getRegion(Regions.fromName(info.region)));
         return lambda;
     }
 
-    GetFunctionResult registLambda(RegistInfo info,AWSLambda lambda) {
-        logger.info("regist: function:" + info.functionName + "/handler:" + info.handler);
-        logger.debug("regist info :{}", info);
+    GetFunctionResult registerLambda(RegisterInfo info, AWSLambda lambda) {
+        logger.info("register: function:" + info.functionName + "/handler:" + info.handler);
+        logger.debug("register info :{}", info);
         try {
 
             getFunction(lambda,info.functionName);
@@ -141,7 +142,7 @@ public class RegisterLambdaHandler {
         return lambda.getFunction(new GetFunctionRequest().withFunctionName(functionName));
     }
 
-    CreateFunctionResult createFunction(AWSLambda lambda,RegistInfo info) {
+    CreateFunctionResult createFunction(AWSLambda lambda,RegisterInfo info) {
         return lambda.createFunction(
                 new CreateFunctionRequest()
                         .withFunctionName(info.functionName)
@@ -158,7 +159,7 @@ public class RegisterLambdaHandler {
         );
     }
 
-    UpdateFunctionCodeResult updateFunction(AWSLambda lambda, RegistInfo info) {
+    UpdateFunctionCodeResult updateFunction(AWSLambda lambda, RegisterInfo info) {
         return lambda.updateFunctionCode(
                 new UpdateFunctionCodeRequest()
                 .withFunctionName(info.functionName)

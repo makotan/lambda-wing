@@ -107,3 +107,10 @@ PRODとか数値のバージョン番号とか任意のが使える
 ```
 aws lambda  --profile bassar --region us-west-2 invoke --function-name sample1 --invocation-type RequestResponse --qualifier PROD --payload '{"value": 5}' output.txt
 ```
+
+
+# Lambda Function 自動登録機能
+LambdaのFunctionに登録したいメソッド(=Handler)にLambdaHandlerアノテーションを追加する  
+アノテーションにvalueを設定するとfunction名はそれになる。valueが無いときはメソッドの名前をfunction名として選択するので通常はセットする  
+メモリーやタイムアウトのconfig関係もアノテーションにセットする  
+リージョンなどの情報は引数として渡す  
