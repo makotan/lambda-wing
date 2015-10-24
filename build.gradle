@@ -122,18 +122,25 @@ project(':sample/sample1') {
         from "sample"
         destinationDir file("build")
     }
+    dependencies {
+        compile(project(':core'))
+    }
 
 }
 
 project(':tool/shared') {
 
     dependencies {
+        compile(project(':core'))
         compile("org.springframework.boot:spring-boot-starter")
         testCompile("org.springframework.boot:spring-boot-starter-test")
+        testCompile("org.springframework.boot:spring-boot-starter-logging")
         compile('args4j:args4j:2.32')
 
         // util
-        compile("'org.reflections:reflections:0.9.10'")
+        compile('org.reflections:reflections:0.9.10')
+        compile('com.amazonaws:aws-java-sdk:1.10.27')
+
 
     }
 
