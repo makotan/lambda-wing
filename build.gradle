@@ -30,7 +30,7 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'idea'
-    apply plugin: 'spring-boot'
+//    apply plugin: 'spring-boot'
 
     //Encoding
     def defaultEncoding = 'UTF-8'
@@ -108,14 +108,14 @@ subprojects {
 group = "com.makotan.libs.lambda.wing"
 
 project(':sample/sample1') {
-    apply plugin: "base"
+//    apply plugin: "base"
     apply plugin: "jp.classmethod.aws.lambda"
 
     lambda {
         region = "us-west-2"
     }
     compileJava {
-        options.compilerArgs << "-Xlint:deprecation"
+        // options.compilerArgs << "-Xlint:deprecation"
     }
 
     task zip(type: Zip) {
@@ -132,17 +132,41 @@ project(':tool/shared') {
 
     dependencies {
         compile(project(':core'))
-        compile("org.springframework.boot:spring-boot-starter")
-        testCompile("org.springframework.boot:spring-boot-starter-test")
-        testCompile("org.springframework.boot:spring-boot-starter-logging")
-        compile('args4j:args4j:2.32')
+//        compile("org.springframework.boot:spring-boot-starter")
+        testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+        compile("org.springframework.boot:spring-boot-starter-logging:${springBootVersion}")
 
         // util
         compile('org.reflections:reflections:0.9.10')
         compile('com.amazonaws:aws-java-sdk:1.10.27')
 
+    }
+}
+
+
+project(':tool/cli') {
+    apply plugin: 'application'
+
+    mainClassName = 'com.makotan.libs.lambda.wing.LambdaWingApp'
+
+    startScripts {
+        applicationName = 'bassar'
+    }
+    dependencies {
+        compile(project(':tool/shared'))
+//        compile("org.springframework.boot:spring-boot-starter")
+        testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+        compile("org.springframework.boot:spring-boot-starter-logging:${springBootVersion}")
+        compile('args4j:args4j:2.32')
+
+        compile('org.reflections:reflections:0.9.10')
+        compile('com.amazonaws:aws-java-sdk:1.10.27')
 
     }
+    jar {
+        manifest {
+            attributes 'Main-Class' : 'com.makotan.libs.lambda.wing.LambdaWingApp'
+        }
+        from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }}
 
-
-}

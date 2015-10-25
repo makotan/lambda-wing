@@ -65,7 +65,9 @@ public class RegisterLambdaHandler {
 
     public static class RegisterResult {
         public Method method;
-        public GetFunctionResult result;
+        public GetFunctionResult result = null;
+        public CreateFunctionResult createFunctionResult = null;
+        public UpdateFunctionCodeResult updateFunctionCodeResult = null;
     }
 
     public List<RegisterResult> register(RegisterInfo info, Set<Method> methodSet) {
@@ -73,13 +75,13 @@ public class RegisterLambdaHandler {
         return methodSet.stream()
                 .map(m -> {
                     RegisterResult result = new RegisterResult();
-                    result.method = m;
                     try {
                         RegisterInfo ri = createRegisterInfo(info, m);
-                        result.result = registerLambda(ri, awsLambda);
+                        result = registerLambda(ri, awsLambda);
                     } catch (Exception e) {
-                        result.result = null;
+                        // NOT PROCESS
                     }
+                    result.method = m;
                     return result;
                 }).collect(Collectors.toList());
     }
@@ -97,11 +99,14 @@ public class RegisterLambdaHandler {
 
     AWSLambda getAWSLambda(RegisterInfo info) {
         AWSLambda lambda = new AWSLambdaClient(new ToolAWSCredentialsProviderChain(info.profile));
-        lambda.setRegion(Region.getRegion(Regions.fromName(info.region)));
+        if (info.region != null && ! info.region.isEmpty()) {
+            lambda.setRegion(Region.getRegion(Regions.fromName(info.region)));
+        }
         return lambda;
     }
 
-    GetFunctionResult registerLambda(RegisterInfo info, AWSLambda lambda) {
+    RegisterResult registerLambda(RegisterInfo info, AWSLambda lambda) {
+        RegisterResult ret = new RegisterResult();
         logger.info("register: function:" + info.functionName + "/handler:" + info.handler);
         logger.debug("register info :{}", info);
         try {
@@ -109,7 +114,7 @@ public class RegisterLambdaHandler {
             getFunction(lambda,info.functionName);
             logger.debug("update function");
             try {
-                updateFunction(lambda, info);
+                ret.updateFunctionCodeResult = updateFunction(lambda, info);
             } catch (Exception ex) {
                 logger.warn("update function" , ex);
                 throw ex;
@@ -119,7 +124,7 @@ public class RegisterLambdaHandler {
         } catch (ResourceNotFoundException notEx) {
             logger.debug("create function");
             try {
-                createFunction(lambda, info);
+                ret.createFunctionResult = createFunction(lambda, info);
             } catch (Exception ex) {
                 logger.warn("create function" , ex);
                 throw ex;
@@ -131,11 +136,12 @@ public class RegisterLambdaHandler {
 
 
         try {
-            return getFunction(lambda,info.functionName);
+            ret.result = getFunction(lambda,info.functionName);
         } catch (Exception ex) {
             logger.warn("get function",ex);
             throw ex;
         }
+        return ret;
     }
 
     GetFunctionResult getFunction(AWSLambda lambda, String functionName) {
