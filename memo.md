@@ -26,11 +26,10 @@ add Command line options `--module "amd" --target "es5"`
 # 規約関係
 
 - 愛称は `ばっさープロジェクト` or `Bassar Project` 。明確に把握出来る場合は `ばっさー` も可
-- ライセンスはLGPLあたりになる予定
 - 基本的に使う言語は日本語
 - 当面はブランチ管理しない。使っても良いけどその場合はgit flowに従う
 - Issue管理はgithubを利用する
-- CIはまだしない。publicにしたらやるかも
+- CIはまだしない。そのうち
 - 残すべきと思った情報はWiki/ソースコード/このファイル/EvernoteのProject bookのどれかに残す
 - パッケージ名は仮に `com.makotan.tool.lambda.wing` にする。そのうち変わる予定
 - テストは機能を網羅出来るようになるべく書く。ただしサンプルは任意
@@ -114,3 +113,7 @@ LambdaのFunctionに登録したいメソッド(=Handler)にLambdaHandlerアノ�
 アノテーションにvalueを設定するとfunction名はそれになる。valueが無いときはメソッドの名前をfunction名として選択するので通常はセットする  
 メモリーやタイムアウトのconfig関係もアノテーションにセットする  
 リージョンなどの情報は引数として渡す  
+
+```
+java -jar tool/cli/build/libs/tool/cli-0.0.1-SNAPSHOT.jar --command deployLambda --profile bassar --region us-west-2 --role arn:aws:iam::1234567890:role/lambda-poweruser --s3Bucket deploy-bucket --s3Key deploy/dev/sample1-0.0.1-SNAPSHOT.jar --path sample/sample1/build/libs/sample/sample1-0.0.1-SNAPSHOT.jar
+```
