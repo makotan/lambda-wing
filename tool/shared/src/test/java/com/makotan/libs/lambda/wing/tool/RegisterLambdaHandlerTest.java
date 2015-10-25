@@ -5,12 +5,13 @@ import com.amazonaws.services.lambda.model.CreateFunctionResult;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.ResourceNotFoundException;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeResult;
+import com.makotan.libs.lambda.wing.tool.model.LambdaRegisterInfo;
+import com.makotan.libs.lambda.wing.tool.model.LambdaRegisterResult;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -25,12 +26,12 @@ public class RegisterLambdaHandlerTest {
     @Test
     public void createRegisterInfoTest() {
         RegisterLambdaHandler handler = new RegisterLambdaHandler();
-        RegisterLambdaHandler.RegisterInfo info = new RegisterLambdaHandler.RegisterInfo();
+        LambdaRegisterInfo info = new LambdaRegisterInfo();
         HandlerFinder finder = new HandlerFinder();
         Set<Method> methods = finder.find("com.makotan.sample.lambda.wing.one");
-        RegisterLambdaHandler.RegisterInfo registerInfo = handler.createRegisterInfo(info, methods.iterator().next());
-        assertThat(registerInfo.handler , is("com.makotan.sample.lambda.wing.one.LambdaHandler:call"));
-        assertThat(registerInfo.functionName , is("call"));
+        LambdaRegisterInfo lambdaRegisterInfo = handler.createRegisterInfo(info, methods.iterator().next());
+        assertThat(lambdaRegisterInfo.handler , is("com.makotan.sample.lambda.wing.one.LambdaHandler:call"));
+        assertThat(lambdaRegisterInfo.functionName , is("call"));
     }
 
     @Test
@@ -48,10 +49,10 @@ public class RegisterLambdaHandlerTest {
         UpdateFunctionCodeResult updateResult = new UpdateFunctionCodeResult();
         when(lambda.updateFunctionCode(any())).thenReturn(updateResult);
 
-        RegisterLambdaHandler.RegisterInfo info = new RegisterLambdaHandler.RegisterInfo();
+        LambdaRegisterInfo info = new LambdaRegisterInfo();
         HandlerFinder finder = new HandlerFinder();
         Set<Method> methods = finder.find("com.makotan.sample.lambda.wing.one");
-        List<RegisterLambdaHandler.RegisterResult> resultList = handler.register(info, methods);
+        List<LambdaRegisterResult> resultList = handler.register(info, methods);
         assertThat(resultList.size(),is(1));
         assertThat(resultList.get(0).result,is(callResult));
 
@@ -74,10 +75,10 @@ public class RegisterLambdaHandlerTest {
         UpdateFunctionCodeResult updateResult = new UpdateFunctionCodeResult();
         when(lambda.updateFunctionCode(any())).thenReturn(updateResult);
 
-        RegisterLambdaHandler.RegisterInfo info = new RegisterLambdaHandler.RegisterInfo();
+        LambdaRegisterInfo info = new LambdaRegisterInfo();
         HandlerFinder finder = new HandlerFinder();
         Set<Method> methods = finder.find("com.makotan.sample.lambda.wing.one");
-        List<RegisterLambdaHandler.RegisterResult> resultList = handler.register(info, methods);
+        List<LambdaRegisterResult> resultList = handler.register(info, methods);
         assertThat(resultList.size(),is(1));
         assertThat(resultList.get(0).result,is(callResult));
 

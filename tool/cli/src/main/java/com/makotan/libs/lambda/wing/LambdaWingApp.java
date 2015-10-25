@@ -1,15 +1,14 @@
 package com.makotan.libs.lambda.wing;
 
-import com.amazonaws.auth.AWSCredentialsProviderChain;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CopyObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.makotan.libs.lambda.wing.core.exception.LambdaWingException;
 import com.makotan.libs.lambda.wing.core.util.Either;
 import com.makotan.libs.lambda.wing.tool.HandlerFinder;
 import com.makotan.libs.lambda.wing.tool.RegisterLambdaHandler;
 import com.makotan.libs.lambda.wing.tool.aws.ToolAWSCredentialsProviderChain;
+import com.makotan.libs.lambda.wing.tool.model.LambdaRegisterInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ public class LambdaWingApp {
             Set<Method> methods = finder.find(options.jarPath.toURI().toURL(), options.basePackage);
             logger.info("find {} method" , methods.size());
             RegisterLambdaHandler register = new RegisterLambdaHandler();
-            RegisterLambdaHandler.RegisterInfo info = convertTo(options);
+            LambdaRegisterInfo info = convertTo(options);
             register.register(info , methods);
             logger.info("register {} method" , methods.size());
         } catch (MalformedURLException e) {
@@ -51,8 +50,8 @@ public class LambdaWingApp {
         }
     }
 
-    RegisterLambdaHandler.RegisterInfo convertTo(CliOptions options) {
-        RegisterLambdaHandler.RegisterInfo info = new RegisterLambdaHandler.RegisterInfo();
+    LambdaRegisterInfo convertTo(CliOptions options) {
+        LambdaRegisterInfo info = new LambdaRegisterInfo();
         info.profile = options.profile;
         info.publishVersion = options.publishVersion;
         info.region = options.region;
