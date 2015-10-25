@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -72,18 +73,24 @@ public class RegisterLambdaHandler {
 
     public List<RegisterResult> register(RegisterInfo info, Set<Method> methodSet) {
         AWSLambda awsLambda = getAWSLambda(info);
+        Set<String> handlerSet = new HashSet<>();
         return methodSet.stream()
                 .map(m -> {
                     RegisterResult result = new RegisterResult();
                     try {
                         RegisterInfo ri = createRegisterInfo(info, m);
+                        if (handlerSet.contains(ri.handler)) {
+                            return null;
+                        }
                         result = registerLambda(ri, awsLambda);
+                        handlerSet.add(ri.handler);
                     } catch (Exception e) {
                         // NOT PROCESS
                     }
                     result.method = m;
                     return result;
-                }).collect(Collectors.toList());
+                }).filter(rr -> rr != null)
+                .collect(Collectors.toList());
     }
 
     RegisterInfo createRegisterInfo(RegisterInfo info, Method method) {

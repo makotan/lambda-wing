@@ -1,8 +1,9 @@
-package com.makotan.libs.lambda.wing.sample;
+package com.makotan.sample.lambda.wing;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.makotan.libs.lambda.wing.core.LambdaHandler;
 
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -22,6 +23,7 @@ public class Sample01 implements RequestHandler<Sample01.Request,Sample01.Respon
     }
 
     @Override
+    @LambdaHandler
     public Response handleRequest(Request request, Context context) {
         LambdaLogger logger = context.getLogger();
         logger.log("RemainingTimeInMillis:" + context.getRemainingTimeInMillis());

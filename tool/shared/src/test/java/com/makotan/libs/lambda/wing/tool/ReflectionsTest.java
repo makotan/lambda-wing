@@ -9,7 +9,11 @@ import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
+import java.io.File;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.*;
@@ -40,6 +44,31 @@ public class ReflectionsTest {
     @LambdaHandler(value = "findtest")
     public String ha(Integer v , Context c) {
         return ""  + v;
+    }
+
+    //@Test
+    public void findJar() throws MalformedURLException {
+        URL url = new File("../../sample/sample1/build/libs/sample/sample1-0.0.1-SNAPSHOT.jar").toURI().toURL();
+        Reflections reflections =
+                new Reflections(new ConfigurationBuilder()
+                        .addUrls(url)
+                        //.addClassLoader(URLClassLoader.newInstance(new URL[]{url}))
+                        //.addClassLoader(getClass().getClassLoader())
+                        .filterInputsBy(name -> name.startsWith("com.makotan.sample"))
+                        .forPackages("com.makotan.sample")
+                        .addScanners(new MethodAnnotationsScanner())
+                );
+        Set<Method> methodSet = reflections.getMethodsAnnotatedWith(LambdaHandler.class);
+        System.out.println(methodSet);
+        Method method = methodSet.stream().findFirst().get();
+        System.out.println(method.getDeclaringClass());
+        System.out.println(method.getParameterTypes()[0]);
+        System.out.println(method.getParameterTypes()[1]);
+        System.out.println(method.getReturnType());
+
+        HandlerFinder handlerFinder = new HandlerFinder();
+        Set<Method> methods = handlerFinder.find(url, "com.makotan.sample");
+        System.out.println(methods);
     }
 
 }

@@ -8,6 +8,7 @@ import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Set;
 
 /**
@@ -28,6 +29,7 @@ public class HandlerFinder {
     public Set<Method> find(URL url,String basePackage) {
         Reflections reflections =
                 new Reflections(new ConfigurationBuilder()
+                        .addClassLoader(URLClassLoader.newInstance(new URL[]{url}))
                         .addUrls(url)
                         .filterInputsBy(name -> name.startsWith(basePackage))
                         .forPackages(basePackage)
