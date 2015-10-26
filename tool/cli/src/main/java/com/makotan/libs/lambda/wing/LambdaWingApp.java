@@ -6,14 +6,18 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.makotan.libs.lambda.wing.core.exception.LambdaWingException;
 import com.makotan.libs.lambda.wing.core.util.Either;
 import com.makotan.libs.lambda.wing.tool.HandlerFinder;
+import com.makotan.libs.lambda.wing.tool.LambdaAlias;
 import com.makotan.libs.lambda.wing.tool.RegisterLambdaHandler;
 import com.makotan.libs.lambda.wing.tool.aws.ToolAWSCredentialsProviderChain;
+import com.makotan.libs.lambda.wing.tool.model.LambdaAliasRegister;
 import com.makotan.libs.lambda.wing.tool.model.LambdaRegisterInfo;
+import com.makotan.libs.lambda.wing.tool.model.LambdaRegisterResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -43,7 +47,16 @@ public class LambdaWingApp {
             logger.info("find {} method" , methods.size());
             RegisterLambdaHandler register = new RegisterLambdaHandler();
             LambdaRegisterInfo info = convertTo(options);
-            register.register(info , methods);
+            List<LambdaRegisterResult> registerList = register.register(info, methods);
+            if (options.aliasName != null && ! options.aliasName.isEmpty()) {
+                LambdaAlias alias = new LambdaAlias();
+                LambdaAliasRegister rg = new LambdaAliasRegister();
+                rg.aliasName = options.aliasName;
+                rg.profile = options.profile;
+                rg.region = options.region;
+                rg.registerList = registerList;
+                alias.registerAlias(rg);
+            }
             logger.info("register {} method" , methods.size());
         } catch (MalformedURLException e) {
             e.printStackTrace();

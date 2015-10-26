@@ -35,6 +35,8 @@ public class CliOptions {
     public boolean publishVersion = false;
     @Option(name = "--basePackage" , required = true , usage = "Lambda function package name")
     public String basePackage;
+    @Option(name = "--aliasName" , required = false , usage = "Lambda alias name")
+    public String aliasName;
 
     public static Either<LambdaWingException,CliOptions> parseArgument(String ... args) {
         CliOptions options = new CliOptions();
@@ -62,6 +64,7 @@ public class CliOptions {
                 ", s3Key='" + s3Key + '\'' +
                 ", publishVersion=" + publishVersion +
                 ", basePackage='" + basePackage + '\'' +
+                ", aliasName='" + aliasName + '\'' +
                 '}';
     }
 }
