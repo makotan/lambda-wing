@@ -42,7 +42,6 @@ public class RegisterLambdaHandler {
                     } catch (Exception e) {
                         // NOT PROCESS
                     }
-                    result.method = m;
                     return result;
                 }).filter(rr -> rr != null)
                 .collect(Collectors.toList());

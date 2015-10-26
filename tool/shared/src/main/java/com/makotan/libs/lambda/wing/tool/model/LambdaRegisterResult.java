@@ -10,7 +10,6 @@ import java.lang.reflect.Method;
  * Created by makotan on 2015/10/26.
  */
 public class LambdaRegisterResult {
-    public Method method;
     public GetFunctionResult result = null;
     public CreateFunctionResult createFunctionResult = null;
     public UpdateFunctionCodeResult updateFunctionCodeResult = null;

@@ -75,13 +75,13 @@ subprojects {
 
     dependencies {
 
-        compile('com.amazonaws:aws-lambda-java-core:1.0.0')
+        compile(
+                'com.amazonaws:aws-lambda-java-core:1.0.0',
+                'javax.ws.rs:javax.ws.rs-api:2.0.1',
+        )
 
         //Spring boot
         testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
-
-        // util
-        compile("com.google.guava:guava:18.0")
 
     }
 
