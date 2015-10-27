@@ -7,14 +7,12 @@ import com.amazonaws.services.lambda.AWSLambdaClient;
 import com.amazonaws.services.lambda.model.CreateAliasRequest;
 import com.amazonaws.services.lambda.model.CreateAliasResult;
 import com.amazonaws.services.lambda.model.GetAliasRequest;
-import com.amazonaws.services.lambda.model.GetAliasResult;
 import com.amazonaws.services.lambda.model.ResourceNotFoundException;
 import com.amazonaws.services.lambda.model.UpdateAliasRequest;
 import com.amazonaws.services.lambda.model.UpdateAliasResult;
-import com.makotan.libs.lambda.wing.core.util.Tuple2;
 import com.makotan.libs.lambda.wing.tool.aws.ToolAWSCredentialsProviderChain;
 import com.makotan.libs.lambda.wing.tool.model.LambdaAliasRegister;
-import com.makotan.libs.lambda.wing.tool.model.LambdaRegisterInfo;
+import com.makotan.libs.lambda.wing.tool.model.LambdaAliasRegisterResult;
 import com.makotan.libs.lambda.wing.tool.model.LambdaRegisterResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,13 +27,7 @@ public class LambdaAlias {
     Logger logger = LoggerFactory.getLogger(getClass());
 
 
-    public static class AliasRegisterResult {
-        public LambdaRegisterResult lambdaRegisterResult;
-        public UpdateAliasResult updateAliasResult;
-        public CreateAliasResult createAliasResult;
-    }
-
-    public List<AliasRegisterResult> registerAlias(LambdaAliasRegister register) {
+    public List<LambdaAliasRegisterResult> registerAlias(LambdaAliasRegister register) {
         AWSLambda lambda = getAWSLambda(register);
         return register.registerList.stream()
                 .map(rr -> register(rr, lambda, register))
@@ -50,9 +42,11 @@ public class LambdaAlias {
         return lambda;
     }
 
-    AliasRegisterResult register(LambdaRegisterResult rr , AWSLambda lambda, LambdaAliasRegister register) {
-        AliasRegisterResult result = new AliasRegisterResult();
-        result.lambdaRegisterResult = rr;
+    LambdaAliasRegisterResult register(LambdaRegisterResult rr , AWSLambda lambda, LambdaAliasRegister register) {
+        LambdaAliasRegisterResult result = new LambdaAliasRegisterResult();
+        result.createFunctionResult = rr.createFunctionResult;
+        result.updateFunctionCodeResult = rr.updateFunctionCodeResult;
+        result.result = rr.result;
 
         String functionName = null;
         String functionVersion = null;

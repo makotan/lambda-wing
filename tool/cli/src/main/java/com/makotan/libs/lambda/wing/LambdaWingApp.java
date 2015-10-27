@@ -3,6 +3,8 @@ package com.makotan.libs.lambda.wing;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SequenceWriter;
 import com.makotan.libs.lambda.wing.core.exception.LambdaWingException;
 import com.makotan.libs.lambda.wing.core.util.Either;
 import com.makotan.libs.lambda.wing.tool.HandlerFinder;
@@ -10,11 +12,13 @@ import com.makotan.libs.lambda.wing.tool.LambdaAlias;
 import com.makotan.libs.lambda.wing.tool.RegisterLambdaHandler;
 import com.makotan.libs.lambda.wing.tool.aws.ToolAWSCredentialsProviderChain;
 import com.makotan.libs.lambda.wing.tool.model.LambdaAliasRegister;
+import com.makotan.libs.lambda.wing.tool.model.LambdaAliasRegisterResult;
 import com.makotan.libs.lambda.wing.tool.model.LambdaRegisterInfo;
 import com.makotan.libs.lambda.wing.tool.model.LambdaRegisterResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.List;
@@ -39,6 +43,15 @@ public class LambdaWingApp {
     }
 
     public void execute(CliOptions options) {
+        if(options.basicCommand == CliOptions.command.deployLambda) {
+            deployLambda(options);
+        } else {
+            logger.error("unknown command");
+        }
+    }
+
+
+    void deployLambda(CliOptions options) {
         AmazonS3 s3 = createS3(options);
         copyJarToS3(options,s3);
         HandlerFinder finder = new HandlerFinder();
@@ -55,11 +68,38 @@ public class LambdaWingApp {
                 rg.profile = options.profile;
                 rg.region = options.region;
                 rg.registerList = registerList;
-                alias.registerAlias(rg);
+                List<LambdaAliasRegisterResult> lambdaAliasRegisterResults = alias.registerAlias(rg);
+                outputLambdaAliasRegisterResult(lambdaAliasRegisterResults, options);
+            } else {
+                outputLambdaRegisterResult(registerList, options);
             }
             logger.info("register {} method" , methods.size());
         } catch (MalformedURLException e) {
             e.printStackTrace();
+        }
+    }
+
+    void outputLambdaRegisterResult(List<LambdaRegisterResult> resultList,CliOptions options) {
+        if (options.outputJson == null) {
+            return;
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            mapper.writeValue(options.outputJson, resultList);
+        } catch (IOException ex) {
+            logger.error("output josn " + options.outputJson ,ex);
+        }
+    }
+
+    void outputLambdaAliasRegisterResult(List<LambdaAliasRegisterResult> resultList,CliOptions options) {
+        if (options.outputJson == null) {
+            return;
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            mapper.writeValue(options.outputJson, resultList);
+        } catch (IOException ex) {
+            logger.error("output josn " + options.outputJson ,ex);
         }
     }
 

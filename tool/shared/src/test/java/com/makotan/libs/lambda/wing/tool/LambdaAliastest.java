@@ -8,9 +8,9 @@ import com.amazonaws.services.lambda.model.GetAliasResult;
 import com.amazonaws.services.lambda.model.ResourceNotFoundException;
 import com.amazonaws.services.lambda.model.UpdateAliasResult;
 import com.makotan.libs.lambda.wing.tool.model.LambdaAliasRegister;
+import com.makotan.libs.lambda.wing.tool.model.LambdaAliasRegisterResult;
 import com.makotan.libs.lambda.wing.tool.model.LambdaRegisterResult;
 import org.junit.Test;
-import org.mockito.Spy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,8 +48,8 @@ public class LambdaAliasTest {
         rr.createFunctionResult = new CreateFunctionResult().withFunctionName("test").withVersion("$LATEST");
         register.registerList.add(rr);
 
-        List<LambdaAlias.AliasRegisterResult> aliasRegisterResults = alias.registerAlias(register);
-        assertThat(aliasRegisterResults.size() , is(1));
+        List<LambdaAliasRegisterResult> lambdaAliasRegisterResults = alias.registerAlias(register);
+        assertThat(lambdaAliasRegisterResults.size() , is(1));
 
         verify(lambda).createAlias(any());
     }
@@ -78,8 +78,8 @@ public class LambdaAliasTest {
         rr.createFunctionResult = new CreateFunctionResult().withFunctionName("test").withVersion("$LATEST");
         register.registerList.add(rr);
 
-        List<LambdaAlias.AliasRegisterResult> aliasRegisterResults = alias.registerAlias(register);
-        assertThat(aliasRegisterResults.size() , is(1));
+        List<LambdaAliasRegisterResult> lambdaAliasRegisterResults = alias.registerAlias(register);
+        assertThat(lambdaAliasRegisterResults.size() , is(1));
 
         verify(lambda).updateAlias(any());
     }

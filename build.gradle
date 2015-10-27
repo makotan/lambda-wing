@@ -160,7 +160,10 @@ project(':tool/cli') {
         compile('args4j:args4j:2.32')
 
         compile('org.reflections:reflections:0.9.10')
-        compile('com.amazonaws:aws-java-sdk:1.10.27')
+        compile(
+                'com.amazonaws:aws-java-sdk:1.10.27',
+                'com.fasterxml.jackson.module:jackson-module-jsonSchema:2.6.3',
+        )
 
     }
     jar {

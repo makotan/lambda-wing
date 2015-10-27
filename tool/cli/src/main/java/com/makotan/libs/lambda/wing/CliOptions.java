@@ -37,6 +37,8 @@ public class CliOptions {
     public String basePackage;
     @Option(name = "--aliasName" , required = false , usage = "Lambda alias name")
     public String aliasName;
+    @Option(name = "--outputJson" , usage = "function result output json")
+    public File outputJson;
 
     public static Either<LambdaWingException,CliOptions> parseArgument(String ... args) {
         CliOptions options = new CliOptions();
