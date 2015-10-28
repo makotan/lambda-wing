@@ -16,6 +16,7 @@ LGPLv3
 - Lambdaで使えるライブラリとの繋ぎのモジュールを作る
 - コマンドの実行に必要な引数をjsonに纏めれるようにする(引数で上書き)
 - ばっさーの開発がintellijでちょっと辛い(実質CLI)なのをなんとかする
+- Logの収集
 - その後はそのうち考える
  
 # 手順
@@ -35,3 +36,8 @@ java -jar tool/cli/build/libs/tool/cli-0.0.1-SNAPSHOT.jar --command deployLambda
 
 - AWS Consoleでdeploy出来たことを確認する
 
+- `--outputDump`指定で出力したダンプファイルを使って後からaliasを付ける
+
+```
+java -jar tool/cli/build/libs/tool/cli-0.0.1-SNAPSHOT.jar  --command assignAlias --inputDump logs/result.dmp --aliasName test --profile bassar --region us-west-2
+```

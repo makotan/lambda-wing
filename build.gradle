@@ -153,17 +153,18 @@ project(':tool/cli') {
         applicationName = 'bassar'
     }
     dependencies {
-        compile(project(':tool/shared'))
 //        compile("org.springframework.boot:spring-boot-starter")
-        testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
-        compile("org.springframework.boot:spring-boot-starter-logging:${springBootVersion}")
         compile('args4j:args4j:2.32')
 
         compile('org.reflections:reflections:0.9.10')
         compile(
                 'com.amazonaws:aws-java-sdk:1.10.27',
+                'com.fasterxml.jackson.core:jackson-databind:2.6.3',
                 'com.fasterxml.jackson.module:jackson-module-jsonSchema:2.6.3',
         )
+        compile(project(':tool/shared'))
+        testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+        compile("org.springframework.boot:spring-boot-starter-logging:${springBootVersion}")
 
     }
     jar {

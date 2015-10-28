@@ -14,31 +14,36 @@ import java.io.File;
 public class CliOptions {
 
     public enum command {
-        deployLambda
+        deployLambda,
+        assignAlias
     };
 
     @Option(name = "--command", usage = "execute command. default deployLambda")
     public command basicCommand = command.deployLambda;
-    @Option(name = "--path" , required = true ,usage = "deploy jar path")
+    @Option(name = "--path" , usage = "deploy jar path")
     public File jarPath;
     @Option(name = "--profile" , usage = "credentials profile")
     public String profile;
     @Option(name = "--region" , usage = "lambda deploy region")
     public String region;
-    @Option(name = "--role" , required = true , usage = "lambda execute role. not deploy role")
+    @Option(name = "--role" , usage = "lambda execute role. not deploy role")
     public String role;
-    @Option(name = "--s3Bucket" , required = true , usage = "lambda deploy s3 bucket")
+    @Option(name = "--s3Bucket" , usage = "lambda deploy s3 bucket")
     public String s3Bucket;
-    @Option(name = "--s3Key" , required = true, usage = "lambda deploy full key name. ex)xxxx/yyyy.jar")
+    @Option(name = "--s3Key" , usage = "lambda deploy full key name. ex)xxxx/yyyy.jar")
     public String s3Key;
     @Option(name = "--publishVersion" , usage = "lambda publish version. see lambda manual")
     public boolean publishVersion = false;
-    @Option(name = "--basePackage" , required = true , usage = "Lambda function package name")
+    @Option(name = "--basePackage" , usage = "Lambda function package name")
     public String basePackage;
-    @Option(name = "--aliasName" , required = false , usage = "Lambda alias name")
+    @Option(name = "--aliasName" , usage = "Lambda alias name")
     public String aliasName;
     @Option(name = "--outputJson" , usage = "function result output json")
     public File outputJson;
+    @Option(name = "--outputDump" , usage = "function result output dump file")
+    public File outputDump;
+    @Option(name = "--inputDump" , usage = "function result input dump file")
+    public File inputDump;
 
     public static Either<LambdaWingException,CliOptions> parseArgument(String ... args) {
         CliOptions options = new CliOptions();

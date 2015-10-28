@@ -4,7 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SequenceWriter;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.makotan.libs.lambda.wing.core.exception.LambdaWingException;
 import com.makotan.libs.lambda.wing.core.util.Either;
 import com.makotan.libs.lambda.wing.tool.HandlerFinder;
@@ -18,11 +18,22 @@ import com.makotan.libs.lambda.wing.tool.model.LambdaRegisterResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by makotan on 2015/10/25.
@@ -45,9 +56,41 @@ public class LambdaWingApp {
     public void execute(CliOptions options) {
         if(options.basicCommand == CliOptions.command.deployLambda) {
             deployLambda(options);
+        } else if(options.basicCommand == CliOptions.command.assignAlias) {
+            assignAlias(options);
         } else {
             logger.error("unknown command");
         }
+    }
+
+    void assignAlias(CliOptions options) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enableDefaultTyping();
+        try (InputStream is = new FileInputStream(options.inputDump);
+             XMLDecoder decoder = new XMLDecoder(is);
+        ){
+
+            List<? extends LambdaRegisterResult> rl = (List<? extends LambdaRegisterResult>)decoder.readObject();
+            LambdaAlias alias = new LambdaAlias();
+            LambdaAliasRegister rg = new LambdaAliasRegister();
+            rg.aliasName = options.aliasName;
+            rg.profile = options.profile;
+            rg.region = options.region;
+            rg.registerList = rl.stream().map(lrr -> {
+                if (lrr != null && lrr instanceof LambdaAliasRegisterResult) {
+                    logger.debug("lrr is alias");
+                    return ((LambdaAliasRegisterResult)lrr).convertLambdaRegisterResult();
+                } else {
+                    logger.debug("lrr is lrr");
+                    return (LambdaRegisterResult)lrr;
+                }
+            }).collect(Collectors.toList());
+            List<LambdaAliasRegisterResult> lambdaAliasRegisterResults = alias.registerAlias(rg);
+            logger.info("success assign alias");
+        } catch (IOException ex) {
+            logger.error("output josn " + options.inputDump ,ex);
+        }
+
     }
 
 
@@ -69,7 +112,7 @@ public class LambdaWingApp {
                 rg.region = options.region;
                 rg.registerList = registerList;
                 List<LambdaAliasRegisterResult> lambdaAliasRegisterResults = alias.registerAlias(rg);
-                outputLambdaAliasRegisterResult(lambdaAliasRegisterResults, options);
+                outputLambdaRegisterResult(lambdaAliasRegisterResults, options);
             } else {
                 outputLambdaRegisterResult(registerList, options);
             }
@@ -79,27 +122,24 @@ public class LambdaWingApp {
         }
     }
 
-    void outputLambdaRegisterResult(List<LambdaRegisterResult> resultList,CliOptions options) {
-        if (options.outputJson == null) {
-            return;
+    <R extends LambdaRegisterResult >void outputLambdaRegisterResult(List<R> resultList,CliOptions options) {
+        if (options.outputJson != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                mapper.enableDefaultTyping();
+                mapper.writeValue(options.outputJson, resultList);
+            } catch (IOException ex) {
+                logger.error("output josn " + options.outputJson ,ex);
+            }
         }
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            mapper.writeValue(options.outputJson, resultList);
-        } catch (IOException ex) {
-            logger.error("output josn " + options.outputJson ,ex);
-        }
-    }
-
-    void outputLambdaAliasRegisterResult(List<LambdaAliasRegisterResult> resultList,CliOptions options) {
-        if (options.outputJson == null) {
-            return;
-        }
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            mapper.writeValue(options.outputJson, resultList);
-        } catch (IOException ex) {
-            logger.error("output josn " + options.outputJson ,ex);
+        if (options.outputDump != null) {
+            try (OutputStream os = new FileOutputStream(options.outputDump);
+                 XMLEncoder encoder = new XMLEncoder(os)
+            ) {
+                encoder.writeObject(resultList);
+            } catch (IOException ex) {
+                logger.error("output dump " + options.outputDump ,ex);
+            }
         }
     }
 

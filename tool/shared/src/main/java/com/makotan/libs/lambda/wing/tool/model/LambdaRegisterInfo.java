@@ -1,9 +1,11 @@
 package com.makotan.libs.lambda.wing.tool.model;
 
+import java.io.Serializable;
+
 /**
  * Created by makotan on 2015/10/26.
  */
-public class LambdaRegisterInfo {
+public class LambdaRegisterInfo  implements Serializable {
     public String profile;
     public String region;
     public String functionName;
