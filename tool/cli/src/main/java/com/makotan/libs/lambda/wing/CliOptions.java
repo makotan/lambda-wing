@@ -15,7 +15,8 @@ public class CliOptions {
 
     public enum command {
         deployLambda,
-        assignAlias
+        assignAlias,
+        dropLambda
     };
 
     @Option(name = "--command", usage = "execute command. default deployLambda")

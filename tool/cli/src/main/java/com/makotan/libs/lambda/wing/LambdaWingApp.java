@@ -4,12 +4,11 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.makotan.libs.lambda.wing.core.exception.LambdaWingException;
 import com.makotan.libs.lambda.wing.core.util.Either;
 import com.makotan.libs.lambda.wing.tool.HandlerFinder;
 import com.makotan.libs.lambda.wing.tool.LambdaAlias;
-import com.makotan.libs.lambda.wing.tool.RegisterLambdaHandler;
+import com.makotan.libs.lambda.wing.tool.LambdaHandlerUtil;
 import com.makotan.libs.lambda.wing.tool.aws.ToolAWSCredentialsProviderChain;
 import com.makotan.libs.lambda.wing.tool.model.LambdaAliasRegister;
 import com.makotan.libs.lambda.wing.tool.model.LambdaAliasRegisterResult;
@@ -20,17 +19,13 @@ import org.slf4j.LoggerFactory;
 
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -58,14 +53,14 @@ public class LambdaWingApp {
             deployLambda(options);
         } else if(options.basicCommand == CliOptions.command.assignAlias) {
             assignAlias(options);
+        } else if (options.basicCommand == CliOptions.command.dropLambda) {
+            dropLambda(options);
         } else {
             logger.error("unknown command");
         }
     }
 
     void assignAlias(CliOptions options) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enableDefaultTyping();
         try (InputStream is = new FileInputStream(options.inputDump);
              XMLDecoder decoder = new XMLDecoder(is);
         ){
@@ -86,6 +81,7 @@ public class LambdaWingApp {
                 }
             }).collect(Collectors.toList());
             List<LambdaAliasRegisterResult> lambdaAliasRegisterResults = alias.registerAlias(rg);
+            outputDump(lambdaAliasRegisterResults , options);
             logger.info("success assign alias");
         } catch (IOException ex) {
             logger.error("output josn " + options.inputDump ,ex);
@@ -101,7 +97,7 @@ public class LambdaWingApp {
         try {
             Set<Method> methods = finder.find(options.jarPath.toURI().toURL(), options.basePackage);
             logger.info("find {} method" , methods.size());
-            RegisterLambdaHandler register = new RegisterLambdaHandler();
+            LambdaHandlerUtil register = new LambdaHandlerUtil();
             LambdaRegisterInfo info = convertTo(options);
             List<LambdaRegisterResult> registerList = register.register(info, methods);
             if (options.aliasName != null && ! options.aliasName.isEmpty()) {
@@ -122,21 +118,43 @@ public class LambdaWingApp {
         }
     }
 
+    void dropLambda(CliOptions options) {
+        try (InputStream is = new FileInputStream(options.inputDump);
+             XMLDecoder decoder = new XMLDecoder(is);
+        ){
+            LambdaHandlerUtil util = new LambdaHandlerUtil();
+            List<? extends LambdaRegisterResult> rl = (List<? extends LambdaRegisterResult>)decoder.readObject();
+            LambdaRegisterInfo info = new LambdaRegisterInfo();
+            info.profile = options.profile;
+            info.region = options.region;
+
+            util.dropFunction(rl,info);
+
+            logger.info("success drop lambdas");
+        } catch (IOException ex) {
+            logger.error("output josn " + options.inputDump ,ex);
+        }
+
+    }
+
     <R extends LambdaRegisterResult >void outputLambdaRegisterResult(List<R> resultList,CliOptions options) {
         if (options.outputJson != null) {
             ObjectMapper mapper = new ObjectMapper();
             try {
-                mapper.enableDefaultTyping();
-                mapper.writeValue(options.outputJson, resultList);
+                mapper.writerWithDefaultPrettyPrinter().writeValue(options.outputJson, resultList);
             } catch (IOException ex) {
                 logger.error("output josn " + options.outputJson ,ex);
             }
         }
+        outputDump(resultList , options);
+    }
+
+    void outputDump(Object obj , CliOptions options) {
         if (options.outputDump != null) {
             try (OutputStream os = new FileOutputStream(options.outputDump);
                  XMLEncoder encoder = new XMLEncoder(os)
             ) {
-                encoder.writeObject(resultList);
+                encoder.writeObject(obj);
             } catch (IOException ex) {
                 logger.error("output dump " + options.outputDump ,ex);
             }

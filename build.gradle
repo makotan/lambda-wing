@@ -77,7 +77,6 @@ subprojects {
 
         compile(
                 'com.amazonaws:aws-lambda-java-core:1.0.0',
-                'javax.ws.rs:javax.ws.rs-api:2.0.1',
         )
 
         //Spring boot
@@ -123,7 +122,10 @@ project(':sample/sample1') {
         destinationDir file("build")
     }
     dependencies {
-        compile(project(':core'))
+        compile(
+                project(':core'),
+                project(':gw/core'),
+        )
     }
 
 }
@@ -131,14 +133,21 @@ project(':sample/sample1') {
 project(':tool/shared') {
 
     dependencies {
-        compile(project(':core'))
+        compile(
+                project(':core'),
+                project(':gw/core'),
+        )
 //        compile("org.springframework.boot:spring-boot-starter")
         testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
         compile("org.springframework.boot:spring-boot-starter-logging:${springBootVersion}")
 
         // util
         compile('org.reflections:reflections:0.9.10')
-        compile('com.amazonaws:aws-java-sdk:1.10.27')
+        compile(
+                'com.amazonaws:aws-java-sdk:1.10.27',
+                'com.fasterxml.jackson.core:jackson-databind:2.6.3',
+                'com.fasterxml.jackson.module:jackson-module-jsonSchema:2.6.3',
+        )
 
     }
 }
@@ -159,8 +168,6 @@ project(':tool/cli') {
         compile('org.reflections:reflections:0.9.10')
         compile(
                 'com.amazonaws:aws-java-sdk:1.10.27',
-                'com.fasterxml.jackson.core:jackson-databind:2.6.3',
-                'com.fasterxml.jackson.module:jackson-module-jsonSchema:2.6.3',
         )
         compile(project(':tool/shared'))
         testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")

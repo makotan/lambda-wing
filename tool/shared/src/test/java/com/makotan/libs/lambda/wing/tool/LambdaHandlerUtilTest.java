@@ -20,12 +20,12 @@ import static org.mockito.Mockito.*;
 /**
  * Created by makotan on 2015/10/24.
  */
-public class RegisterLambdaHandlerTest {
+public class LambdaHandlerUtilTest {
 
 
     @Test
     public void createRegisterInfoTest() {
-        RegisterLambdaHandler handler = new RegisterLambdaHandler();
+        LambdaHandlerUtil handler = new LambdaHandlerUtil();
         LambdaRegisterInfo info = new LambdaRegisterInfo();
         HandlerFinder finder = new HandlerFinder();
         Set<Method> methods = finder.find("com.makotan.sample.lambda.wing.one");
@@ -37,7 +37,7 @@ public class RegisterLambdaHandlerTest {
     @Test
     public void newRegisterHandler() {
         AWSLambda lambda = mock(AWSLambda.class);
-        RegisterLambdaHandler handler = spy(RegisterLambdaHandler.class);
+        LambdaHandlerUtil handler = spy(LambdaHandlerUtil.class);
         doReturn(lambda).when(handler).getAWSLambda(any());
 
         GetFunctionResult callResult = new GetFunctionResult();
@@ -63,7 +63,7 @@ public class RegisterLambdaHandlerTest {
     @Test
     public void updateRegisterHandler() {
         AWSLambda lambda = mock(AWSLambda.class);
-        RegisterLambdaHandler handler = spy(RegisterLambdaHandler.class);
+        LambdaHandlerUtil handler = spy(LambdaHandlerUtil.class);
         doReturn(lambda).when(handler).getAWSLambda(any());
 
         GetFunctionResult callResult = new GetFunctionResult();

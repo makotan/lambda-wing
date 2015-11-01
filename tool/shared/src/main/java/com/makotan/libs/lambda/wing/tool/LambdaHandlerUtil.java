@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 /**
  * Created by makotan on 2015/10/24.
  */
-public class RegisterLambdaHandler {
+public class LambdaHandlerUtil {
     Logger logger = LoggerFactory.getLogger(getClass());
     // aws lambda  --profile bassar --region us-west-2 create-function --function-name sample1 --runtime java8 --role arn:aws:iam::1234567890:role/lambda-poweruser --handler com.makotan.libs.lambda.wing.sample.Sample01 --zip-file fileb://sample/sample1/build/libs/sample/sample1-0.0.1-SNAPSHOT.jar --timeout 15 --memory-size 512
 
@@ -49,7 +49,7 @@ public class RegisterLambdaHandler {
 
     LambdaRegisterInfo createRegisterInfo(LambdaRegisterInfo info, Method method) {
         LambdaRegisterInfo ri = info.copy();
-        LambdaHandler lambdaHandler = method.getAnnotation(LambdaHandler.class);
+        com.makotan.libs.lambda.wing.core.LambdaHandler lambdaHandler = method.getAnnotation(com.makotan.libs.lambda.wing.core.LambdaHandler.class);
         String funcName = lambdaHandler.value().isEmpty() ? method.getName() : lambdaHandler.value();
         ri.functionName = funcName;
         ri.timeout = lambdaHandler.time();
@@ -135,4 +135,32 @@ public class RegisterLambdaHandler {
                 .withPublish(info.publishVersion)
         );
     }
+
+
+    public void dropFunction(List<? extends LambdaRegisterResult> resultList,LambdaRegisterInfo info) {
+        AWSLambda lambda = getAWSLambda(info);
+        resultList.forEach(lrr -> {
+            dropFunction(lambda , lrr);
+        });
+    }
+
+    void dropFunction(AWSLambda lambda, LambdaRegisterResult registerResult) {
+        DeleteFunctionRequest deleteFunctionResult = new DeleteFunctionRequest();
+        if (registerResult.createFunctionResult != null) {
+            deleteFunctionResult.withFunctionName(registerResult.createFunctionResult.getFunctionName())
+                    .withQualifier(registerResult.createFunctionResult.getVersion());
+        } else {
+            deleteFunctionResult.withFunctionName(registerResult.updateFunctionCodeResult.getFunctionName())
+                    .withQualifier(registerResult.updateFunctionCodeResult.getVersion());
+        }
+        try {
+            lambda.deleteFunction(deleteFunctionResult);
+        } catch (ResourceNotFoundException ex) {
+            logger.warn("deleteFunction " + deleteFunctionResult.getFunctionName() + ":" + deleteFunctionResult.getQualifier(), ex);
+        }
+    }
+
+
+
+
 }
