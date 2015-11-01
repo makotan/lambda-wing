@@ -12,7 +12,6 @@ memo.md を見る
 LGPLv3
 
 # TODO
-- lambdaのバージョン管理が楽になるようにする
 - AWS API Gatewayと一般的な組み合わせを楽に出来るようにする
 - lambdaのテストが簡単にできるようにする
 - Lambdaで使えるライブラリとの繋ぎのモジュールを作る
@@ -43,3 +42,10 @@ java -jar tool/cli/build/libs/tool/cli-0.0.1-SNAPSHOT.jar --command deployLambda
 ```
 java -jar tool/cli/build/libs/tool/cli-0.0.1-SNAPSHOT.jar  --command assignAlias --inputDump logs/result.dmp --aliasName test --profile bassar --region us-west-2
 ```
+
+- `--outputDump`指定で出力したダンプファイルを使ってFunctionを削除する
+
+```
+java -jar tool/cli/build/libs/tool/cli-0.0.1-SNAPSHOT.jar  --command dropLambda --inputDump logs/result.dmp --aliasName test --profile bassar --region us-west-2
+```
+
