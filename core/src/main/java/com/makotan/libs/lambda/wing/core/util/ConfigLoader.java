@@ -32,11 +32,15 @@ public class ConfigLoader {
     final Properties properties = new Properties();
 
     public ConfigLoader() {
-        String functionVersion = System.getenv("AWS_LAMBDA_FUNCTION_VERSION");
-        String functionName = System.getenv("AWS_LAMBDA_FUNCTION_NAME");
+        String functionVersion = getEnv("AWS_LAMBDA_FUNCTION_VERSION");
+        String functionName = getEnv("AWS_LAMBDA_FUNCTION_NAME");
         loadFunctionProperties("/" ,functionName , functionVersion);
     }
 
+    String getEnv(String key) {
+        return System.getProperty(key , System.getenv(key));
+    }
+    
     // テスト用
     public ConfigLoader(Class<?> testClass , String functionName) {
         loadFunctionProperties("/" ,functionName , "test");

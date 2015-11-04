@@ -126,6 +126,9 @@ project(':sample/sample1') {
                 project(':core'),
                 project(':gw/core'),
         )
+        testCompile(
+                project(':test'),
+        )
     }
 
 }
@@ -179,5 +182,22 @@ project(':tool/cli') {
             attributes 'Main-Class' : 'com.makotan.libs.lambda.wing.LambdaWingApp'
         }
         from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    }}
+    }
+}
 
+project(':test') {
+    dependencies {
+        compile(
+                project(':core'),
+                project(':gw/core'),
+        )
+
+        compile('org.reflections:reflections:0.9.10')
+        compile(
+                'com.amazonaws:aws-java-sdk:1.10.27',
+        )
+        compile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+        compile("org.springframework.boot:spring-boot-starter-logging:${springBootVersion}")
+    }
+    
+}
