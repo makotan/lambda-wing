@@ -30,11 +30,18 @@ public class ConfigLoader {
     static ConfigLoader instance = new ConfigLoader();
 
     final Properties properties = new Properties();
+    private static String versionName;
+    boolean updateVersion;
 
     public ConfigLoader() {
         String functionVersion = getEnv("AWS_LAMBDA_FUNCTION_VERSION");
         String functionName = getEnv("AWS_LAMBDA_FUNCTION_NAME");
-        loadFunctionProperties("/" ,functionName , functionVersion);
+        updateVersion = false;
+        if (versionName == null ||  ! versionName.equals(functionVersion)) {
+            versionName = functionVersion;
+            loadFunctionProperties("/" ,functionName , functionVersion);
+            updateVersion = true;
+        }
     }
 
     String getEnv(String key) {
@@ -102,5 +109,9 @@ public class ConfigLoader {
 
     public Properties getProperties() {
         return properties;
+    }
+
+    public boolean isUpdateVersion() {
+        return updateVersion;
     }
 }
