@@ -26,6 +26,7 @@ aws {
     region = 'us-west-2'
 }
 
+
 subprojects {
 
     apply plugin: 'java'
@@ -70,6 +71,23 @@ subprojects {
         sourceSets.main.resources.srcDirs 'src/main/resources/development'
 
     println "Target environment: $environment"
+
+
+    configurations {
+        provided
+    }
+
+    sourceSets {
+        main.compileClasspath += configurations.provided
+        test.compileClasspath += configurations.provided
+        test.runtimeClasspath += configurations.provided
+    }
+
+    idea {
+        module {
+            scopes.PROVIDED.plus += [configurations.provided]
+        }
+    }
 
 
 
@@ -198,6 +216,19 @@ project(':test') {
         )
         compile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
         compile("org.springframework.boot:spring-boot-starter-logging:${springBootVersion}")
+    }
+    
+}
+
+project(':libs/aws') {
+    dependencies {
+        compile(
+                project(':core'),
+        )
+
+        provided(
+                'com.amazonaws:aws-java-sdk:1.10.27',
+        )
     }
     
 }
