@@ -1,2 +1,4 @@
 language: java
 script: gradle check jacocoTestReport
+jdk:
+  - oraclejdk8
