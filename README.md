@@ -2,6 +2,7 @@
 
 [![Join the chat at https://gitter.im/makotan/lambda-wing](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/makotan/lambda-wing?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 (https://circleci.com/gh/makotan/lambda-wing/tree/master.svg?style=shield)
+![build status](https://circleci.com/gh/makotan/lambda-wing.svg?style=shield&circle-token=5117a9dc61be045880459e10457aa96576c58706)
 
 ばっさー  
 AWS Lambda javaの便利ツール  
