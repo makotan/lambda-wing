@@ -135,13 +135,14 @@ group = "com.makotan.libs.lambda.wing"
 
 project(':sample/sample1') {
 //    apply plugin: "base"
-    apply plugin: "jp.classmethod.aws.lambda"
-
+//    apply plugin: "jp.classmethod.aws.lambda"
+/*
     lambda {
         region = "us-west-2"
     }
+*/
     compileJava {
-        // options.compilerArgs << "-Xlint:deprecation"
+        options.compilerArgs << "-Xlint:deprecation"
     }
 
     task zip(type: Zip) {
