@@ -1,7 +1,7 @@
 # lambda-wing
 
 [![Join the chat at https://gitter.im/makotan/lambda-wing](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/makotan/lambda-wing?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[master](https://circleci.com/gh/makotan/lambda-wing/tree/master.svg?style=shield)
+(https://circleci.com/gh/makotan/lambda-wing/tree/master.svg?style=shield)
 
 ばっさー  
 AWS Lambda javaの便利ツール  
