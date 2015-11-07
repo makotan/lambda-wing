@@ -95,7 +95,7 @@ subprojects {
             xml.enabled true
             csv.enabled false
             //html.destination "${rootDir}/build/report/jacoco"
-            //xml.destination "${rootDir}/build/report/jacoco/${project.name}/jacoco_report.xml"
+            xml.destination "${buildDir}/reports/jacoco/test/jacocoTestReport_${project.name}.xml"
         }
     }
 

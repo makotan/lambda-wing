@@ -1,3 +1,9 @@
 machine:
   java:
     version: oraclejdk8
+test:
+  override:
+    - gradle check jacocoTestReport
+  post:
+    - find . -f  cp -R build/reports/* $CIRCLE_ARTIFACTS
+    - find . -type f -regex ".*/build/reports/jacoco/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/ \;
