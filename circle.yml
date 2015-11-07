@@ -1,3 +1,8 @@
 machine:
   java:
     version: oraclejdk8
+test:
+  override:
+    - gradle check jacocoTestReport
+  post:
+    - cp -R build/reports/* $CIRCLE_ARTIFACTS

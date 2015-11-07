@@ -31,6 +31,7 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'idea'
+    apply plugin: 'jacoco'
 //    apply plugin: 'spring-boot'
 
     //Encoding
@@ -89,6 +90,14 @@ subprojects {
         }
     }
 
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            csv.enabled false
+            html.destination "${rootDir}/build/report/jacoco"
+            xml.destination "${rootDir}/build/report/jacoco/${project.name}/jacoco_report.xml"
+        }
+    }
 
 
     dependencies {
