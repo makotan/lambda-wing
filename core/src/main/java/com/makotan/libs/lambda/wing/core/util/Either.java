@@ -84,6 +84,7 @@ public interface Either<L,R> {
     }
     R getRight();
 
+    @SuppressWarnings("unchecked")
     default <L2,R2> Either<L2,R2> flatMap(Function<R, Either<L2, R2>> f) {
         if (isRight()) {
             return f.apply(getRight());

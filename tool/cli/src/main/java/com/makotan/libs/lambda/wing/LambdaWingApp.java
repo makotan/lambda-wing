@@ -60,12 +60,17 @@ public class LambdaWingApp {
         }
     }
 
+    @SuppressWarnings (value="unchecked")
+    List<? extends LambdaRegisterResult> convertLambdaRegisterResult(Object decoderObject) {
+        return (List<? extends LambdaRegisterResult>)decoderObject;
+    }
+
     void assignAlias(CliOptions options) {
         try (InputStream is = new FileInputStream(options.inputDump);
-             XMLDecoder decoder = new XMLDecoder(is);
+             XMLDecoder decoder = new XMLDecoder(is)
         ){
 
-            List<? extends LambdaRegisterResult> rl = (List<? extends LambdaRegisterResult>)decoder.readObject();
+            List<? extends LambdaRegisterResult> rl = convertLambdaRegisterResult(decoder.readObject());
             LambdaAlias alias = new LambdaAlias();
             LambdaAliasRegister rg = new LambdaAliasRegister();
             rg.aliasName = options.aliasName;
@@ -120,10 +125,10 @@ public class LambdaWingApp {
 
     void dropLambda(CliOptions options) {
         try (InputStream is = new FileInputStream(options.inputDump);
-             XMLDecoder decoder = new XMLDecoder(is);
+             XMLDecoder decoder = new XMLDecoder(is)
         ){
             LambdaHandlerUtil util = new LambdaHandlerUtil();
-            List<? extends LambdaRegisterResult> rl = (List<? extends LambdaRegisterResult>)decoder.readObject();
+            List<? extends LambdaRegisterResult> rl = convertLambdaRegisterResult(decoder.readObject());
             LambdaRegisterInfo info = new LambdaRegisterInfo();
             info.profile = options.profile;
             info.region = options.region;
