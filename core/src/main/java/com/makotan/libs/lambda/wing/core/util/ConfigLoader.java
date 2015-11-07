@@ -27,7 +27,7 @@ import java.util.Properties;
  * </pre>
  */
 public class ConfigLoader {
-    static ConfigLoader instance = new ConfigLoader();
+    static ConfigLoader instance;
 
     final Properties properties = new Properties();
     private static String versionName;
@@ -36,7 +36,7 @@ public class ConfigLoader {
     public ConfigLoader() {
         String functionVersion = getEnv("AWS_LAMBDA_FUNCTION_VERSION");
         String functionName = getEnv("AWS_LAMBDA_FUNCTION_NAME");
-        updateVersion = versionName == null || !versionName.equals(functionVersion);
+        updateVersion = StringUtils.notEquals(versionName , functionVersion);
         versionName = functionVersion;
         loadFunctionProperties("/" ,functionName , functionVersion);
     }
@@ -74,12 +74,12 @@ public class ConfigLoader {
 
     boolean loadFunctionProperties(String prefix, String functionName , String functionVersion) {
         boolean ret = loadFromResource(prefix+"application.properties");
-        if (functionVersion != null && ! functionVersion.isEmpty()) {
+        if (StringUtils.isNotEmpty(functionVersion)) {
             ret = ret | loadFromResource(prefix + "application_" + functionVersion + ".properties");
         }
-        if (functionName != null && ! functionName.isEmpty()) {
+        if (StringUtils.isNotEmpty(functionName)) {
             ret = ret | loadFromResource(prefix + functionName + ".properties");
-            if (functionVersion != null && ! functionVersion.isEmpty()) {
+            if (StringUtils.isNotEmpty(functionVersion)) {
                 ret = ret | loadFromResource(prefix + functionName + "_" + functionVersion + ".properties");
             }
         }
@@ -105,8 +105,10 @@ public class ConfigLoader {
             instance = new ConfigLoader();
         } else {
             String functionVersion = instance.getEnv("AWS_LAMBDA_FUNCTION_VERSION");
-            if (versionName == null || ! versionName.equals(functionVersion)) {
+            if (StringUtils.notEquals(versionName,functionVersion)) {
                 instance = new ConfigLoader();
+            } else {
+                instance.updateVersion = false;
             }
         }
         return instance;
