@@ -36,12 +36,9 @@ public class ConfigLoader {
     public ConfigLoader() {
         String functionVersion = getEnv("AWS_LAMBDA_FUNCTION_VERSION");
         String functionName = getEnv("AWS_LAMBDA_FUNCTION_NAME");
-        updateVersion = false;
-        if (versionName == null ||  ! versionName.equals(functionVersion)) {
-            versionName = functionVersion;
-            loadFunctionProperties("/" ,functionName , functionVersion);
-            updateVersion = true;
-        }
+        updateVersion = versionName == null || !versionName.equals(functionVersion);
+        versionName = functionVersion;
+        loadFunctionProperties("/" ,functionName , functionVersion);
     }
 
     String getEnv(String key) {
@@ -103,7 +100,20 @@ public class ConfigLoader {
         }
     }
 
+    static ConfigLoader checkInstance() {
+        if (instance == null) {
+            instance = new ConfigLoader();
+        } else {
+            String functionVersion = instance.getEnv("AWS_LAMBDA_FUNCTION_VERSION");
+            if (! versionName.equals(functionVersion)) {
+                instance = new ConfigLoader();
+            }
+        }
+        return instance;
+    }
+    
     public static ConfigLoader getInstance() {
+        instance = checkInstance();
         return instance;
     }
 
