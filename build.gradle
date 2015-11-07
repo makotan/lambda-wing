@@ -19,13 +19,6 @@ buildscript {
     }
 }
 
-apply plugin: 'jp.classmethod.aws'
-
-aws {
-    profileName = 'bassar'
-    region = 'us-west-2'
-}
-
 
 subprojects {
 

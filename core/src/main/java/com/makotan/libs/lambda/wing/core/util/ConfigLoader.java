@@ -105,7 +105,7 @@ public class ConfigLoader {
             instance = new ConfigLoader();
         } else {
             String functionVersion = instance.getEnv("AWS_LAMBDA_FUNCTION_VERSION");
-            if (! versionName.equals(functionVersion)) {
+            if (versionName == null || ! versionName.equals(functionVersion)) {
                 instance = new ConfigLoader();
             }
         }

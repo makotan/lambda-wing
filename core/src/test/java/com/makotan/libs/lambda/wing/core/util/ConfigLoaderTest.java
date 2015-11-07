@@ -35,6 +35,19 @@ public class ConfigLoaderTest {
         assertThat(loader.getProperties().getProperty("load.test.prop"), is("test"));
     }
 
+    @Test
+    public void getInstanceTest() {
+        System.setProperty("AWS_LAMBDA_FUNCTION_VERSION","test1");
+        ConfigLoader test = ConfigLoader.getInstance();
+        assertNotNull(test);
+        assertThat(test.getProperties().getProperty("static.load.test"), is("test1"));
+
+        System.setProperty("AWS_LAMBDA_FUNCTION_VERSION","test2");
+        ConfigLoader test2 = ConfigLoader.getInstance();
+        assertNotNull(test2);
+        assertThat(test2.getProperties().getProperty("static.load.test"), is("test2"));
+        
+    }
 
 
 }
