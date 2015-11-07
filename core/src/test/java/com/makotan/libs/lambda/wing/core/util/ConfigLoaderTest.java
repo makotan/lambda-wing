@@ -41,11 +41,15 @@ public class ConfigLoaderTest {
         ConfigLoader test = ConfigLoader.getInstance();
         assertNotNull(test);
         assertThat(test.getProperties().getProperty("static.load.test"), is("test1"));
+        assertTrue(test.isUpdateVersion());
+        test = ConfigLoader.getInstance();
+        assertFalse(test.isUpdateVersion());
 
         System.setProperty("AWS_LAMBDA_FUNCTION_VERSION","test2");
         ConfigLoader test2 = ConfigLoader.getInstance();
         assertNotNull(test2);
         assertThat(test2.getProperties().getProperty("static.load.test"), is("test2"));
+        assertTrue(test2.isUpdateVersion());
         
     }
 
