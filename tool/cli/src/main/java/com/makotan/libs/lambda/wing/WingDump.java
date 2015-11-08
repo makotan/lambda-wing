@@ -11,7 +11,6 @@ import java.util.List;
  */
 public class WingDump {
     public long dumpTimestamp = System.currentTimeMillis();
-    public CliOptions cliOptions;
     public List<LambdaRegisterResult> registerList;
     public List<LambdaAliasRegisterResult> lambdaAliasRegisterResults;
 }

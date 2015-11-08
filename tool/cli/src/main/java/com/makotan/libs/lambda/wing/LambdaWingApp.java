@@ -15,6 +15,7 @@ import com.makotan.libs.lambda.wing.tool.model.LambdaAliasRegister;
 import com.makotan.libs.lambda.wing.tool.model.LambdaAliasRegisterResult;
 import com.makotan.libs.lambda.wing.tool.model.LambdaRegisterInfo;
 import com.makotan.libs.lambda.wing.tool.model.LambdaRegisterResult;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -126,7 +128,7 @@ public class LambdaWingApp {
         WingDump wingDump = loadDump(options);
 
         LambdaHandlerUtil util = new LambdaHandlerUtil();
-        List<? extends LambdaRegisterResult> rl = wingDump.lambdaAliasRegisterResults == null ? wingDump.registerList : wingDump.lambdaAliasRegisterResults;
+        List<? extends LambdaRegisterResult> rl = wingDump.registerList;
         LambdaRegisterInfo info = new LambdaRegisterInfo();
         info.profile = options.profile;
         info.region = options.region;
@@ -138,7 +140,6 @@ public class LambdaWingApp {
 
     void outputDump(WingDump dump , CliOptions options) {
         if (options.outputDump != null) {
-            dump.cliOptions = options;
             try (OutputStream os = new FileOutputStream(options.outputDump);
                  XMLEncoder encoder = new XMLEncoder(os)
             ) {
@@ -154,12 +155,14 @@ public class LambdaWingApp {
              XMLDecoder decoder = new XMLDecoder(is)
         ){
             WingDump dump = (WingDump) decoder.readObject();
-            Instant instant = Instant.ofEpochSecond(dump.dumpTimestamp);
-            LocalDateTime ldt = LocalDateTime.from(instant);
-            logger.info("WingDump output time:%s" ,  ldt.toString());
+            Instant instant = Instant.ofEpochMilli(dump.dumpTimestamp);
+            LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+            logger.info("WingDump output datetime: {}" ,  dateTime.toString());
             return dump;
         } catch (IOException ex) {
             logger.error("output josn " + options.inputDump ,ex);
+            throw new LambdaWingException(ex);
+        } catch (Exception ex) {
             throw new LambdaWingException(ex);
         }
     }
