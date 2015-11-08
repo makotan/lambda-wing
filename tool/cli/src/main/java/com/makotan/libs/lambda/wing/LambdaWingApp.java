@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.makotan.libs.lambda.wing.core.exception.LambdaWingException;
 import com.makotan.libs.lambda.wing.core.util.Either;
+import com.makotan.libs.lambda.wing.core.util.StringUtils;
 import com.makotan.libs.lambda.wing.tool.HandlerFinder;
 import com.makotan.libs.lambda.wing.tool.LambdaAlias;
 import com.makotan.libs.lambda.wing.tool.LambdaHandlerUtil;
@@ -14,6 +15,7 @@ import com.makotan.libs.lambda.wing.tool.model.LambdaAliasRegister;
 import com.makotan.libs.lambda.wing.tool.model.LambdaAliasRegisterResult;
 import com.makotan.libs.lambda.wing.tool.model.LambdaRegisterInfo;
 import com.makotan.libs.lambda.wing.tool.model.LambdaRegisterResult;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +28,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,43 +54,41 @@ public class LambdaWingApp {
     }
 
     public void execute(CliOptions options) {
-        if(options.basicCommand == CliOptions.command.deployLambda) {
-            deployLambda(options);
-        } else if(options.basicCommand == CliOptions.command.assignAlias) {
-            assignAlias(options);
-        } else if (options.basicCommand == CliOptions.command.dropLambda) {
-            dropLambda(options);
-        } else {
-            logger.error("unknown command");
+        try {
+            if (options.basicCommand == CliOptions.command.deployLambda) {
+                deployLambda(options);
+            } else if (options.basicCommand == CliOptions.command.assignAlias) {
+                assignAlias(options);
+            } else if (options.basicCommand == CliOptions.command.dropLambda) {
+                dropLambda(options);
+            } else {
+                logger.error("unknown command");
+            }
+        } catch (Exception e) {
+            logger.error("options " + options , e);
         }
     }
 
     void assignAlias(CliOptions options) {
-        try (InputStream is = new FileInputStream(options.inputDump);
-             XMLDecoder decoder = new XMLDecoder(is);
-        ){
-
-            List<? extends LambdaRegisterResult> rl = (List<? extends LambdaRegisterResult>)decoder.readObject();
-            LambdaAlias alias = new LambdaAlias();
-            LambdaAliasRegister rg = new LambdaAliasRegister();
-            rg.aliasName = options.aliasName;
-            rg.profile = options.profile;
-            rg.region = options.region;
-            rg.registerList = rl.stream().map(lrr -> {
-                if (lrr != null && lrr instanceof LambdaAliasRegisterResult) {
-                    logger.debug("lrr is alias");
-                    return ((LambdaAliasRegisterResult)lrr).convertLambdaRegisterResult();
-                } else {
-                    logger.debug("lrr is lrr");
-                    return (LambdaRegisterResult)lrr;
-                }
-            }).collect(Collectors.toList());
-            List<LambdaAliasRegisterResult> lambdaAliasRegisterResults = alias.registerAlias(rg);
-            outputDump(lambdaAliasRegisterResults , options);
-            logger.info("success assign alias");
-        } catch (IOException ex) {
-            logger.error("output josn " + options.inputDump ,ex);
-        }
+        WingDump wingDump = loadDump(options);
+        List<? extends LambdaRegisterResult> rl = wingDump.lambdaAliasRegisterResults == null ? wingDump.registerList : wingDump.lambdaAliasRegisterResults;
+        LambdaAlias alias = new LambdaAlias();
+        LambdaAliasRegister rg = new LambdaAliasRegister();
+        rg.aliasName = options.aliasName;
+        rg.profile = options.profile;
+        rg.region = options.region;
+        rg.registerList = rl.stream().map(lrr -> {
+            if (lrr != null && lrr instanceof LambdaAliasRegisterResult) {
+                logger.debug("lrr is alias");
+                return ((LambdaAliasRegisterResult)lrr).convertLambdaRegisterResult();
+            } else {
+                logger.debug("lrr is lrr");
+                return (LambdaRegisterResult)lrr;
+            }
+        }).collect(Collectors.toList());
+        wingDump.lambdaAliasRegisterResults = alias.registerAlias(rg);
+        outputDump(wingDump , options);
+        logger.info("success assign alias");
 
     }
 
@@ -94,70 +97,73 @@ public class LambdaWingApp {
         AmazonS3 s3 = createS3(options);
         copyJarToS3(options,s3);
         HandlerFinder finder = new HandlerFinder();
+        
         try {
+            WingDump wingDump = new WingDump();
             Set<Method> methods = finder.find(options.jarPath.toURI().toURL(), options.basePackage);
             logger.info("find {} method" , methods.size());
             LambdaHandlerUtil register = new LambdaHandlerUtil();
             LambdaRegisterInfo info = convertTo(options);
-            List<LambdaRegisterResult> registerList = register.register(info, methods);
-            if (options.aliasName != null && ! options.aliasName.isEmpty()) {
+            wingDump.registerList = register.register(info, methods);
+
+            if (StringUtils.isNotEmpty(options.aliasName)) {
                 LambdaAlias alias = new LambdaAlias();
                 LambdaAliasRegister rg = new LambdaAliasRegister();
                 rg.aliasName = options.aliasName;
                 rg.profile = options.profile;
                 rg.region = options.region;
-                rg.registerList = registerList;
-                List<LambdaAliasRegisterResult> lambdaAliasRegisterResults = alias.registerAlias(rg);
-                outputLambdaRegisterResult(lambdaAliasRegisterResults, options);
-            } else {
-                outputLambdaRegisterResult(registerList, options);
+                rg.registerList = wingDump.registerList;
+                wingDump.lambdaAliasRegisterResults = alias.registerAlias(rg);
             }
+            
+            outputDump(wingDump, options);
+            
             logger.info("register {} method" , methods.size());
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            throw new LambdaWingException(e);
         }
     }
 
     void dropLambda(CliOptions options) {
-        try (InputStream is = new FileInputStream(options.inputDump);
-             XMLDecoder decoder = new XMLDecoder(is);
-        ){
-            LambdaHandlerUtil util = new LambdaHandlerUtil();
-            List<? extends LambdaRegisterResult> rl = (List<? extends LambdaRegisterResult>)decoder.readObject();
-            LambdaRegisterInfo info = new LambdaRegisterInfo();
-            info.profile = options.profile;
-            info.region = options.region;
+        WingDump wingDump = loadDump(options);
 
-            util.dropFunction(rl,info);
+        LambdaHandlerUtil util = new LambdaHandlerUtil();
+        List<? extends LambdaRegisterResult> rl = wingDump.registerList;
+        LambdaRegisterInfo info = new LambdaRegisterInfo();
+        info.profile = options.profile;
+        info.region = options.region;
 
-            logger.info("success drop lambdas");
-        } catch (IOException ex) {
-            logger.error("output josn " + options.inputDump ,ex);
-        }
+        util.dropFunction(rl,info);
 
+        logger.info("success drop lambdas");
     }
 
-    <R extends LambdaRegisterResult >void outputLambdaRegisterResult(List<R> resultList,CliOptions options) {
-        if (options.outputJson != null) {
-            ObjectMapper mapper = new ObjectMapper();
-            try {
-                mapper.writerWithDefaultPrettyPrinter().writeValue(options.outputJson, resultList);
-            } catch (IOException ex) {
-                logger.error("output josn " + options.outputJson ,ex);
-            }
-        }
-        outputDump(resultList , options);
-    }
-
-    void outputDump(Object obj , CliOptions options) {
+    void outputDump(WingDump dump , CliOptions options) {
         if (options.outputDump != null) {
             try (OutputStream os = new FileOutputStream(options.outputDump);
                  XMLEncoder encoder = new XMLEncoder(os)
             ) {
-                encoder.writeObject(obj);
+                encoder.writeObject(dump);
             } catch (IOException ex) {
                 logger.error("output dump " + options.outputDump ,ex);
             }
+        }
+    }
+
+    WingDump loadDump(CliOptions options) {
+        try (InputStream is = new FileInputStream(options.inputDump);
+             XMLDecoder decoder = new XMLDecoder(is)
+        ){
+            WingDump dump = (WingDump) decoder.readObject();
+            Instant instant = Instant.ofEpochMilli(dump.dumpTimestamp);
+            LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+            logger.info("WingDump output datetime: {}" ,  dateTime.toString());
+            return dump;
+        } catch (IOException ex) {
+            logger.error("output josn " + options.inputDump ,ex);
+            throw new LambdaWingException(ex);
+        } catch (Exception ex) {
+            throw new LambdaWingException(ex);
         }
     }
 
