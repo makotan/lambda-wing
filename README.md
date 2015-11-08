@@ -18,11 +18,11 @@ LGPLv3
 
 # TODO
 - AWS API Gatewayと一般的な組み合わせを楽に出来るようにする
-- lambdaのテストが簡単にできるようにする
 - Lambdaで使えるライブラリとの繋ぎのモジュールを作る
 - コマンドの実行に必要な引数をjsonに纏めれるようにする(引数で上書き)
 - ばっさーの開発がintellijでちょっと辛い(実質CLI)なのをなんとかする
 - Logの収集
+- Dumpファイルの中を扱いやすく出力出来るようにする(Json)
 - その後はそのうち考える
  
 # 手順
@@ -48,7 +48,8 @@ java -jar tool/cli/build/libs/tool/cli-0.0.1-SNAPSHOT.jar --command deployLambda
 java -jar tool/cli/build/libs/tool/cli-0.0.1-SNAPSHOT.jar  --command assignAlias --inputDump logs/result.dmp --aliasName test --profile bassar --region us-west-2
 ```
 
-- `--outputDump`指定で出力したダンプファイルを使ってFunctionを削除する
+- `--outputDump`指定で出力したダンプファイルを使ってFunctionを削除する  
+aliasがついて無いこと`--publishVersion`していることが必須
 
 ```
 java -jar tool/cli/build/libs/tool/cli-0.0.1-SNAPSHOT.jar  --command dropLambda --inputDump logs/result.dmp --aliasName test --profile bassar --region us-west-2
