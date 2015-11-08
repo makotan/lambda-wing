@@ -54,32 +54,20 @@ public @interface RestMethod {
      * 無ければグローバル設定を利用する
      * @return
      */
-    String aliasName();
+    String aliasName() default "";
 
     /**
      * IAMを使ってアクセス制限するときに入力のIAMのMapから取得するためのキー
      * キーが無ければ設定されずにIAM制限無しになる
      * @return
      */
-    String awsIAMKey();
+    String awsIAMKey() default "";
 
     /**
      * APIキーを使ってアクセス制御するときに入力のAPIKeyのMapから取得するためのキー
      * キーが無ければ設定されずにAPIKey制限無しになる
      * @return
      */
-    String awsAPIKey();
-
-    /**
-     * リクエストのマッピング情報。無ければデフォルトを自動で作るように努力する
-     * @return
-     */
-    RequestMapping[] requestMapping();
-
-    /**
-     * レスポンスのマッピング情報、無ければデフォルトを自動で作るように努力する
-     * @return
-     */
-    ResponseMapping[] responseMapping();
+    String awsAPIKey() default "";
 
 }

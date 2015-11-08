@@ -30,5 +30,5 @@ import java.lang.annotation.Target;
      * 無いときはLambdaの戻りの型情報から自動で作る。作れないときはエラー
      * @return
      */
-    String responseMappingTemplate();
+    String responseMappingTemplate() default "";
 }

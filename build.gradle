@@ -8,14 +8,10 @@ buildscript {
     repositories {
         mavenLocal()
         mavenCentral()
-        maven { url "https://plugins.gradle.org/m2/" }
         maven { url "http://repo.spring.io/release" }
-        maven { url 'https://dl.bintray.com/sothmann/gradle-plugins' }
     }
     dependencies {
-        classpath "jp.classmethod.aws:gradle-aws-plugin:0.21"
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath 'de.richsource.gradle.plugins:typescript-gradle-plugin:1.5'
     }
 }
 
@@ -169,10 +165,14 @@ project(':tool/shared') {
         compile('org.reflections:reflections:0.9.10')
         compile(
                 'com.amazonaws:aws-java-sdk:1.10.27',
+                'com.amazonaws:aws-apigateway-sdk-java:1.1.0',
                 'com.fasterxml.jackson.core:jackson-databind:2.6.3',
                 'com.fasterxml.jackson.module:jackson-module-jsonSchema:2.6.3',
         )
-
+        compile 'com.goldmansachs:gs-collections-api:6.2.0'
+        compile 'com.goldmansachs:gs-collections:6.2.0'
+        testCompile 'com.goldmansachs:gs-collections-testutils:6.2.0'
+        compile 'com.goldmansachs:gs-collections-forkjoin:6.2.0'
     }
 }
 
@@ -192,6 +192,7 @@ project(':tool/cli') {
         compile('org.reflections:reflections:0.9.10')
         compile(
                 'com.amazonaws:aws-java-sdk:1.10.27',
+                'com.amazonaws:aws-apigateway-sdk-java:1.1.0',
         )
         compile(project(':tool/shared'))
         testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
