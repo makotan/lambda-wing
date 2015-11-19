@@ -54,7 +54,7 @@ public class LambdaHandlerUtil {
         ri.functionName = funcName;
         ri.timeout = lambdaHandler.time();
         ri.memory = lambdaHandler.mem();
-        ri.handler = method.getDeclaringClass().getCanonicalName() + ":" + method.getName();
+        ri.handler = method.getDeclaringClass().getCanonicalName() + "::" + method.getName();
         return ri;
     }
 

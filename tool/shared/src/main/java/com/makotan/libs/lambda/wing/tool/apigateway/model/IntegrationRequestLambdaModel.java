@@ -10,7 +10,7 @@ public class IntegrationRequestLambdaModel  extends IntegrationRequestModel{
     public String function;
     public Boolean invokeWithCallerCredentials;
     public boolean credentialsCache;
-    public Map<String,Object> mappingTemplates;
+    public Map<String,String> mappingTemplates;
 
     @Override
     public boolean equals(Object o) {

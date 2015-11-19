@@ -30,7 +30,7 @@ public class LambdaHandlerUtilTest {
         HandlerFinder finder = new HandlerFinder();
         Set<Method> methods = finder.find("com.makotan.sample.lambda.wing.one");
         LambdaRegisterInfo lambdaRegisterInfo = handler.createRegisterInfo(info, methods.iterator().next());
-        assertThat(lambdaRegisterInfo.handler , is("com.makotan.sample.lambda.wing.one.LambdaHandler:call"));
+        assertThat(lambdaRegisterInfo.handler , is("com.makotan.sample.lambda.wing.one.LambdaHandler::call"));
         assertThat(lambdaRegisterInfo.functionName , is("call"));
     }
 
