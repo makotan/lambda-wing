@@ -8,13 +8,8 @@ import java.lang.annotation.Target;
 /**
  * Created by makotan on 2015/11/20.
  */
-@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RequestMapping {
-
-    Class<?> requestClass();
-
-    String description() default "";
-
-    String name();
+@Target({ElementType.METHOD})
+public @interface RequestParameterMappingAnnotation {
+    RequestParameterMapping[] value();
 }

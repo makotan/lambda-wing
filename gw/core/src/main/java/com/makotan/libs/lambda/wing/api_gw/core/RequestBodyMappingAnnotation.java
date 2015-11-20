@@ -6,15 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by makotan on 2015/11/20.
+ * Created by makotan on 2015/11/01.
  */
-@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RequestMapping {
-
-    Class<?> requestClass();
-
-    String description() default "";
-
-    String name();
+@Target({ElementType.METHOD})
+public @interface RequestBodyMappingAnnotation {
+    RequestBodyMapping[] value();
 }

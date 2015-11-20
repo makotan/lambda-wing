@@ -35,26 +35,13 @@ public @interface RestMethod {
      * CORSのドメイン設定。デフォルトは全開。コマンドの引数があればそれを優先して利用する
      * @return
      */
-    String corsDomain() default "*";
+    String[] corsDomain() default {"*"};
 
     /**
      * 呼び出しに使うHttpMethod
      * @return
      */
     HttpMethod httpMethod();
-
-    /**
-     * Lambdaとして呼び出すFunction名
-     * @return
-     */
-    String functionName();
-
-    /**
-     * Lambdaとして呼び出すFunctionのAlias名
-     * 無ければグローバル設定を利用する
-     * @return
-     */
-    String aliasName() default "";
 
     /**
      * IAMを使ってアクセス制限するときに入力のIAMのMapから取得するためのキー
@@ -69,5 +56,12 @@ public @interface RestMethod {
      * @return
      */
     String awsAPIKey() default "";
+
+    String summary() default "";
+
+    String description() default "";
+
+    String[] tag() default {};
+
 
 }

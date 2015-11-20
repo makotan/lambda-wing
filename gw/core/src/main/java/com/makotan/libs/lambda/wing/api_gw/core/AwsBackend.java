@@ -8,13 +8,12 @@ import java.lang.annotation.Target;
 /**
  * Created by makotan on 2015/11/20.
  */
-@Target({ElementType.METHOD})
+@Target( { ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RequestMapping {
-
-    Class<?> requestClass();
-
-    String description() default "";
-
-    String name();
+public @interface AwsBackend {
+    String uri();
+    String httpMethod();
+    String credentials();
+    String cacheNamespace() default "";
+    String[] cacheKeyParameters() default {};
 }

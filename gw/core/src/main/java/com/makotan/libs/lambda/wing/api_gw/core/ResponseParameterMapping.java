@@ -6,10 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by makotan on 2015/11/01.
+ * Created by makotan on 2015/11/20.
  */
-@Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface RequestMappingAnnotation {
-    RequestMapping[] value();
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ResponseParameterMapping {
+    String responseHeader();
+    String responseValue();
 }

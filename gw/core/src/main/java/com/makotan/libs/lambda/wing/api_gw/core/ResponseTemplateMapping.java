@@ -10,11 +10,8 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RequestMapping {
-
-    Class<?> requestClass();
-
-    String description() default "";
-
-    String name();
+public @interface ResponseTemplateMapping {
+    String mime() default "application/json;charset=UTF-8";
+    String template();
+    String fileName() default "";
 }
