@@ -16,5 +16,4 @@ public @interface RequestMapping {
 
     String description() default "";
 
-    String name();
 }

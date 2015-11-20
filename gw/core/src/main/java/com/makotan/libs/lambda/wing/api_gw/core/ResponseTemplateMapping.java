@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ResponseTemplateMapping {
     String mime() default "application/json;charset=UTF-8";
-    String template();
+    String template() default "";
     String fileName() default "";
 }

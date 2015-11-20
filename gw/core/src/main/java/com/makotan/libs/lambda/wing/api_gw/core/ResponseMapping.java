@@ -23,5 +23,9 @@ public @interface ResponseMapping {
 
     ResponseTemplateMapping[] template() default {};
 
+    boolean isDefault() default true;
 
+    String searchKey() default "";
+
+    Class<?> responseClass() default Object.class;
 }

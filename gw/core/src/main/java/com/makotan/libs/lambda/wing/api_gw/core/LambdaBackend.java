@@ -25,9 +25,9 @@ public @interface LambdaBackend {
      */
     String aliasName() default "";
 
-    String region();
+    String region() default "";
 
-    String credentials();
+    String credentials() default "";
     String cacheNamespace() default "";
     String[] cacheKeyParameters() default {};
 

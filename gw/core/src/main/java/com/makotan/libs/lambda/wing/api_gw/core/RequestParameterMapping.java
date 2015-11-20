@@ -21,5 +21,5 @@ public @interface RequestParameterMapping {
     String description() default "";
     boolean required() default false;
     String integrationParam();
-    String integrationMethod();
+    String methodParam();
 }

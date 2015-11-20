@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Repeatable(RequestBodyMappingAnnotation.class)
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@interface RequestBodyMapping {
+public @interface RequestBodyMapping {
 
     /**
      * コンテンツタイプを文字列で
@@ -26,6 +26,8 @@ import java.lang.annotation.Target;
      * @return
      */
     String requestMappingTemplate() default "";
+
+    String requestMappingTemplateFile() default "";
 
     String example() default "";
 }
