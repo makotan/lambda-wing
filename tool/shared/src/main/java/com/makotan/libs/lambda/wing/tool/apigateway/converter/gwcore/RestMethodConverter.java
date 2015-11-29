@@ -8,8 +8,8 @@ import com.makotan.libs.lambda.wing.tool.apigateway.converter.ConvertContext;
 import com.makotan.libs.lambda.wing.tool.apigateway.converter.ConverterUtils;
 import com.makotan.libs.lambda.wing.tool.apigateway.converter.MethodToSwaggerConverter;
 import com.makotan.libs.lambda.wing.tool.apigateway.model.AmazonApiGatewayAuth;
-import com.makotan.libs.lambda.wing.tool.apigateway.model.AmazonApigatewayIntegrationResponse;
-import com.makotan.libs.lambda.wing.tool.apigateway.model.AmazonApigatewayIntegration;
+import com.makotan.libs.lambda.wing.tool.apigateway.model.AmazonApiGatewayIntegrationResponse;
+import com.makotan.libs.lambda.wing.tool.apigateway.model.AmazonApiGatewayIntegration;
 import com.makotan.libs.lambda.wing.tool.apigateway.model.SwaggerConvertErrors;
 import com.makotan.libs.lambda.wing.tool.apigateway.model.SwaggerConvertInfo;
 import io.swagger.converter.ModelConverters;
@@ -91,7 +91,7 @@ public class RestMethodConverter implements MethodToSwaggerConverter {
             operation.parameter(param);
         }
 
-        AmazonApigatewayIntegration integration = new AmazonApigatewayIntegration();
+        AmazonApiGatewayIntegration integration = new AmazonApiGatewayIntegration();
 
         RequestBodyMappingAnnotation requestBodyMappingAnnotation = method.getAnnotation(RequestBodyMappingAnnotation.class);
         if (requestBodyMappingAnnotation != null && requestBodyMappingAnnotation.value() != null && requestBodyMappingAnnotation.value().length != 0) {
@@ -165,7 +165,7 @@ public class RestMethodConverter implements MethodToSwaggerConverter {
         if (responseMappingAnnotation != null) {
             Arrays.stream(responseMappingAnnotation.value()).forEach(rma -> {
                 String searchKey = "default";
-                AmazonApigatewayIntegrationResponse response = new AmazonApigatewayIntegrationResponse();
+                AmazonApiGatewayIntegrationResponse response = new AmazonApiGatewayIntegrationResponse();
                 if (StringUtils.isNotEmpty(rma.searchKey())) {
                     searchKey = rma.searchKey();
                 }
