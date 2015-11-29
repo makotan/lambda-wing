@@ -8,7 +8,7 @@ import com.makotan.libs.lambda.wing.tool.apigateway.converter.ConvertContext;
 import com.makotan.libs.lambda.wing.tool.apigateway.converter.ConverterUtils;
 import com.makotan.libs.lambda.wing.tool.apigateway.converter.MethodToSwaggerConverter;
 import com.makotan.libs.lambda.wing.tool.apigateway.model.AmazonApiGatewayAuth;
-import com.makotan.libs.lambda.wing.tool.apigateway.model.AmazonApiGatewayIntegrationResponse;
+import com.makotan.libs.lambda.wing.tool.apigateway.model.AmazonApigatewayIntegrationResponse;
 import com.makotan.libs.lambda.wing.tool.apigateway.model.AmazonApigatewayIntegration;
 import com.makotan.libs.lambda.wing.tool.apigateway.model.SwaggerConvertErrors;
 import com.makotan.libs.lambda.wing.tool.apigateway.model.SwaggerConvertInfo;
@@ -165,7 +165,7 @@ public class RestMethodConverter implements MethodToSwaggerConverter {
         if (responseMappingAnnotation != null) {
             Arrays.stream(responseMappingAnnotation.value()).forEach(rma -> {
                 String searchKey = "default";
-                AmazonApiGatewayIntegrationResponse response = new AmazonApiGatewayIntegrationResponse();
+                AmazonApigatewayIntegrationResponse response = new AmazonApigatewayIntegrationResponse();
                 if (StringUtils.isNotEmpty(rma.searchKey())) {
                     searchKey = rma.searchKey();
                 }

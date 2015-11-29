@@ -17,7 +17,7 @@ public class AmazonApigatewayIntegration {
     public Map<String,String> requestParameters = new HashMap<>();
     public String cacheNamespace;
     public List<String> cacheKeyParameters = new ArrayList<>();
-    public Map<String,AmazonApiGatewayIntegrationResponse> responses = new HashMap<>();
+    public Map<String,AmazonApigatewayIntegrationResponse> responses = new HashMap<>();
 
     public AmazonApigatewayIntegration type(String type) {
         this.type = type;
@@ -83,12 +83,12 @@ public class AmazonApigatewayIntegration {
         return this;
     }
 
-    public AmazonApigatewayIntegration responses(Map<String, AmazonApiGatewayIntegrationResponse> responses) {
+    public AmazonApigatewayIntegration responses(Map<String, AmazonApigatewayIntegrationResponse> responses) {
         this.responses = responses;
         return this;
     }
 
-    public AmazonApigatewayIntegration addResponses(String searchKey, AmazonApiGatewayIntegrationResponse response) {
+    public AmazonApigatewayIntegration addResponses(String searchKey, AmazonApigatewayIntegrationResponse response) {
         if (this.responses == null) {
             this.responses = new HashMap<>();
         }
