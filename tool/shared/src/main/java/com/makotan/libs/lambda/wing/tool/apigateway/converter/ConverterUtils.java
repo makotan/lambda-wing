@@ -11,8 +11,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by makotan on 2015/11/29.
@@ -122,5 +126,14 @@ public class ConverterUtils {
             return;
         }
         setter.set(val);
+    }
+
+    public static <U,T> U reduce(Stream<T> stream , U identity , BiFunction<U, T , U> accumulator) {
+        AtomicReference<U> ref = new AtomicReference<>(identity);
+        stream.forEach( v -> {
+            U u = accumulator.apply(ref.get() , v);
+            ref.set(u);
+        });
+        return ref.get();
     }
 }

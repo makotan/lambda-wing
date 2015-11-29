@@ -15,5 +15,5 @@ public interface MethodToSwaggerConverter {
 
     Class<? extends Annotation> scanAnnotation();
 
-    Either<SwaggerConvertErrors,Swagger> convert(Class<?> klass, Method method, SwaggerConvertInfo info, Swagger swagger, ConvertContext context);
+    Either<SwaggerConvertErrors,Swagger> convert(Class<?> klass, Method method, SwaggerConvertInfo info, Either<SwaggerConvertErrors, Swagger> swaggerEither, ConvertContext context);
 }

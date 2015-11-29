@@ -41,7 +41,11 @@ public class RestMethodConverter implements MethodToSwaggerConverter {
     }
 
     @Override
-    public Either<SwaggerConvertErrors,Swagger> convert(Class<?> klass, Method method, SwaggerConvertInfo info, Swagger swagger, ConvertContext context) {
+    public Either<SwaggerConvertErrors,Swagger> convert(Class<?> klass, Method method, SwaggerConvertInfo info, Either<SwaggerConvertErrors, Swagger>  swaggerEither, ConvertContext context) {
+        if (swaggerEither.isLeft()) {
+            return swaggerEither;
+        }
+        Swagger swagger = swaggerEither.getRight();
         Path path = (Path) context.get(RestResource.class);
         setMethod(method , path , swagger,info);
         return Either.right(swagger);

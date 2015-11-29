@@ -45,6 +45,7 @@ public class SwaggerConverter {
 
     public Either<SwaggerConvertErrors,Swagger> convert(SwaggerConvertInfo info) {
         Swagger swagger = new Swagger();
+        Either<SwaggerConvertErrors,Swagger> either = Either.right(swagger);
         ConvertContext context = new ConvertContext();
 
         Reflections reflections =
@@ -62,17 +63,24 @@ public class SwaggerConverter {
             if (typesAnnotatedWith.isEmpty()) {
                 return;
             }
-            typesAnnotatedWith.forEach(type -> {
-                conv.convert(type, info , swagger,context);
-                if (conv.useMethodScan()) {
-                    methodToSwaggerConverters.forEach(mconv -> {
-                        Set<Method> methods = Arrays.stream(type.getMethods()).filter(m -> m.getAnnotation(mconv.scanAnnotation()) != null).collect(Collectors.toSet());
-                        methods.forEach(method -> {
-                            mconv.convert(type,method,info,swagger,context);
-                        });
+            ConverterUtils.reduce(typesAnnotatedWith.stream() , either
+                    ,(swgTypeInEither , type) -> {
+                        Either<SwaggerConvertErrors, Swagger> swgTypeOutEither = conv.convert(type, info, swgTypeInEither, context);
+                        if (conv.useMethodScan()) {
+                            return ConverterUtils.reduce(methodToSwaggerConverters.stream()
+                                    , swgTypeOutEither
+                                    , (swgMethodInEither , mconv) -> {
+                                        Set<Method> methods = Arrays.stream(type.getMethods()).filter(m -> m.getAnnotation(mconv.scanAnnotation()) != null).collect(Collectors.toSet());
+                                        return ConverterUtils.reduce(methods.stream() ,
+                                                swgMethodInEither,
+                                                (swgMethodEither , method) -> {
+                                                    return mconv.convert(type,method,info,swgMethodEither,context);
+                                                });
+                                    });
+                        } else {
+                            return swgTypeOutEither;
+                        }
                     });
-                }
-            });
         });
         return Either.right(swagger);
     }

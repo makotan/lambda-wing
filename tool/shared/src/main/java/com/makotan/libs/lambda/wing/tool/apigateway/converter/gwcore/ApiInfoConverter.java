@@ -30,7 +30,11 @@ public class ApiInfoConverter implements ClassToSwaggerConverter {
     }
 
     @Override
-    public Either<SwaggerConvertErrors,Swagger> convert(Class<?> klass, SwaggerConvertInfo info, Swagger swagger,ConvertContext context) {
+    public Either<SwaggerConvertErrors,Swagger> convert(Class<?> klass, SwaggerConvertInfo info, Either<SwaggerConvertErrors, Swagger> swaggerEither,ConvertContext context) {
+        if (swaggerEither.isLeft()) {
+            return swaggerEither;
+        }
+        Swagger swagger = swaggerEither.getRight();
         ApiInfo apiInfo = klass.getAnnotation(ApiInfo.class);
 
         ConverterUtils.setCheckVal(swagger::basePath , apiInfo.basePath() , "" , info::getBasePath , StringUtils::isEmpty);

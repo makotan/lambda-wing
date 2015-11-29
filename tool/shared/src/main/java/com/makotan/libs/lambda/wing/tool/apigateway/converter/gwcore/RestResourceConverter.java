@@ -26,7 +26,11 @@ public class RestResourceConverter implements ClassToSwaggerConverter {
     }
 
     @Override
-    public Either<SwaggerConvertErrors, Swagger> convert(Class<?> klass, SwaggerConvertInfo info, Swagger swagger, ConvertContext context) {
+    public Either<SwaggerConvertErrors, Swagger> convert(Class<?> klass, SwaggerConvertInfo info, Either<SwaggerConvertErrors, Swagger>  swaggerEither, ConvertContext context) {
+        if (swaggerEither.isLeft()) {
+            return swaggerEither;
+        }
+        Swagger swagger = swaggerEither.getRight();
         RestResource restResource = klass.getAnnotation(RestResource.class);
         String path = restResource.value();
         Path swgPath = new Path();

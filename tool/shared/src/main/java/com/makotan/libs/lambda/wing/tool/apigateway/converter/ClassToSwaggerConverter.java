@@ -16,6 +16,6 @@ public interface ClassToSwaggerConverter {
 
     boolean useMethodScan();
 
-    Either<SwaggerConvertErrors,Swagger> convert(Class<?> klass, SwaggerConvertInfo info, Swagger swagger, ConvertContext context);
+    Either<SwaggerConvertErrors,Swagger> convert(Class<?> klass, SwaggerConvertInfo info, Either<SwaggerConvertErrors,Swagger> swaggerEither, ConvertContext context);
 
 }
