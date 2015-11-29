@@ -7,6 +7,7 @@ import io.swagger.models.Swagger;
 import io.swagger.util.Json;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -29,17 +30,8 @@ public class SwaggerConverterTest {
         info.title = "swgcon";
         info.awsAccountId = "1234567890";
         Either<SwaggerConvertErrors, Swagger> convert = converter.convert(info);
-        outputSwagger(convert.getRight());
 
-    }
-    public void outputSwagger(Swagger swagger) throws IOException {
-        Json.prettyPrint(swagger);
-        List<String> outList = Arrays.asList(Json.pretty(swagger));
-        java.nio.file.Path path = Paths.get("swagger.json");
-        if (path.toFile().exists()) {
-            path.toFile().delete();
-        }
-        java.nio.file.Path file = Files.createFile(path);
-        Files.write(file , outList , Charset.defaultCharset(),  StandardOpenOption.WRITE);
+        converter.outputFile(convert.getRight() , new File("logs/json/swagger.json"));
+
     }
 }

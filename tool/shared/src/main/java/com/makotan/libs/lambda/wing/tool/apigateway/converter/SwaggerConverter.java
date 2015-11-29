@@ -7,14 +7,21 @@ import com.makotan.libs.lambda.wing.tool.apigateway.converter.gwcore.RestResourc
 import com.makotan.libs.lambda.wing.tool.apigateway.model.SwaggerConvertErrors;
 import com.makotan.libs.lambda.wing.tool.apigateway.model.SwaggerConvertInfo;
 import io.swagger.models.Swagger;
+import io.swagger.util.Json;
 import org.reflections.Reflections;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -68,6 +75,17 @@ public class SwaggerConverter {
             });
         });
         return Either.right(swagger);
+    }
+
+    public void outputFile(Swagger swagger , File swaggerFile) throws IOException {
+        List<String> outList = Arrays.asList(Json.pretty(swagger));
+        java.nio.file.Path path = swaggerFile.toPath();
+        path.getParent().toFile().mkdirs();
+        if (swaggerFile.exists()) {
+            swaggerFile.delete();
+        }
+        java.nio.file.Path file = Files.createFile(path);
+        Files.write(file , outList , Charset.defaultCharset(),  StandardOpenOption.WRITE);
     }
 
 }
