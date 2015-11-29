@@ -1,4 +1,4 @@
-package com.makotan.lambda.wing.test;
+package com.makotan.libs.lambda.wing.tool.apigateway.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +17,7 @@ public class AmazonApigatewayIntegration {
     public Map<String,String> requestParameters = new HashMap<>();
     public String cacheNamespace;
     public List<String> cacheKeyParameters = new ArrayList<>();
-    public Map<String,AmazonApigatewayIntegrationResponse> responses = new HashMap<>();
+    public Map<String,AmazonApiGatewayIntegrationResponse> responses = new HashMap<>();
 
     public AmazonApigatewayIntegration type(String type) {
         this.type = type;
@@ -83,12 +83,12 @@ public class AmazonApigatewayIntegration {
         return this;
     }
 
-    public AmazonApigatewayIntegration responses(Map<String, AmazonApigatewayIntegrationResponse> responses) {
+    public AmazonApigatewayIntegration responses(Map<String, AmazonApiGatewayIntegrationResponse> responses) {
         this.responses = responses;
         return this;
     }
 
-    public AmazonApigatewayIntegration addResponses(String searchKey, AmazonApigatewayIntegrationResponse response) {
+    public AmazonApigatewayIntegration addResponses(String searchKey, AmazonApiGatewayIntegrationResponse response) {
         if (this.responses == null) {
             this.responses = new HashMap<>();
         }

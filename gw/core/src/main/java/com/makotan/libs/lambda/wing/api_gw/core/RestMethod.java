@@ -48,14 +48,7 @@ public @interface RestMethod {
      * キーが無ければ設定されずにIAM制限無しになる
      * @return
      */
-    String awsIAMKey() default "";
-
-    /**
-     * APIキーを使ってアクセス制御するときに入力のAPIKeyのMapから取得するためのキー
-     * キーが無ければ設定されずにAPIKey制限無しになる
-     * @return
-     */
-    String awsAPIKey() default "";
+    String auth() default "none";
 
     String summary() default "";
 

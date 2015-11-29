@@ -1,12 +1,12 @@
 package com.makotan.libs.lambda.wing.tool.apigateway;
 
-import com.makotan.libs.lambda.wing.tool.apigateway.model.ApiGatewayModel;
+import io.swagger.models.Swagger;
 
 /**
  * Created by makotan on 2015/11/06.
  */
 public class ApiGatewayDeploy {
-    public void deploy(ApiGatewayModel model) {
+    public void deploy(Swagger model) {
 
     }
 }
