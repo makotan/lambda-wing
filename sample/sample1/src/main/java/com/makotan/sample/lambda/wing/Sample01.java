@@ -13,7 +13,7 @@ import java.util.Enumeration;
 /**
  * Created by makotan on 2015/10/17.
  */
-public class Sample01 implements RequestHandler<Sample01.Request,Sample01.Response> {
+public class Sample01 implements RequestHandler<SimpleLambdaRequest,SimpleLambdaResponse> {
     static {
         System.out.println("Sample01 static call");
     }
@@ -24,7 +24,7 @@ public class Sample01 implements RequestHandler<Sample01.Request,Sample01.Respon
 
     @Override
     @LambdaHandler
-    public Response handleRequest(Request request, Context context) {
+    public SimpleLambdaResponse handleRequest(SimpleLambdaRequest request, Context context) {
         LambdaLogger logger = context.getLogger();
         logger.log("RemainingTimeInMillis:" + context.getRemainingTimeInMillis());
         logger.log("AwsRequestId:" + context.getAwsRequestId());
@@ -32,6 +32,8 @@ public class Sample01 implements RequestHandler<Sample01.Request,Sample01.Respon
         logger.log("LogGroupName:" + context.getLogGroupName());
         logger.log("LogStreamName:" + context.getLogStreamName());
         logger.log("ClientContext:" + context.getClientContext());
+        logger.log("FunctionVersion:" + context.getFunctionVersion());
+        logger.log("InvokedFunctionArn:" + context.getInvokedFunctionArn());
         logger.log("MemoryLimitInMB:" + context.getMemoryLimitInMB());
         logger.log("availableProcessors:" + Runtime.getRuntime().availableProcessors());
         logger.log("freeMemory:" + Runtime.getRuntime().freeMemory());
@@ -39,6 +41,7 @@ public class Sample01 implements RequestHandler<Sample01.Request,Sample01.Respon
         logger.log("totalMemory:" + Runtime.getRuntime().totalMemory());
         logger.log("env:" + System.getenv());
         logger.log("Properties:" + System.getProperties());
+
 
         Enumeration<NetworkInterface> networkInterfaces = null;
         try {
@@ -66,34 +69,12 @@ public class Sample01 implements RequestHandler<Sample01.Request,Sample01.Respon
             logger.log(e.toString());
         }
 
-        Response res = new Response();
-        res.setValue("val:" + request.getValue());
+        SimpleLambdaResponse res = new SimpleLambdaResponse();
+        res.fullName = request.firstName + " " + request.lastName;
+        res.status = "ok";
         logger.log("RemainingTimeInMillis:" + context.getRemainingTimeInMillis());
         return res;
     }
 
-    public static class Request {
-        private int value;
-
-        public int getValue() {
-            return value;
-        }
-
-        public void setValue(int value) {
-            this.value = value;
-        }
-    }
-
-    public static class Response {
-        private String value;
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-    }
 
 }

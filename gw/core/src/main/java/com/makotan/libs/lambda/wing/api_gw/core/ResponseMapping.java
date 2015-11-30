@@ -14,15 +14,16 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ResponseMapping {
     /**
-     * コンテンツタイプを文字列で
+     * マッピングで使うステータスコード
      * @return
      */
-    String contentType() default "application/json";
+    int statusCode() default 200;
 
-    /**
-     * リクエストをマッピングするための個別テンプレート
-     * 無いときはLambdaの引数情報から自動で作る。作れないときはエラー
-     * @return
-     */
-    String requestMappingTemplate();
+    ResponseParameterMapping[] parameter() default {};
+
+    ResponseTemplateMapping[] template() default {};
+
+    String searchKey() default "";
+
+    Class<?> responseClass() default Object.class;
 }

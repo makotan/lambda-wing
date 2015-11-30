@@ -9,12 +9,17 @@ develop ![build status](https://circleci.com/gh/makotan/lambda-wing/tree/develop
 ばっさー  
 AWS Lambda javaの便利ツール  
 
-
 # 詳細
 memo.md を見る
 
 # ライセンス
 LGPLv3
+
+# 機能
+- Lambda javaのdeployとalias設定
+- Testのサポート
+- 環境に合わせたpropertyファイルの読み替え
+- API Gatewayとの連携(鋭意開発中)
 
 # TODO
 - AWS API Gatewayと一般的な組み合わせを楽に出来るようにする
@@ -54,4 +59,10 @@ aliasがついて無いこと`--publishVersion`していることが必須
 ```
 java -jar tool/cli/build/libs/tool/cli-0.0.1-SNAPSHOT.jar  --command dropLambda --inputDump logs/result.dmp --aliasName test --profile bassar --region us-west-2
 ```
+
+# link
+
+[JAWS](https://github.com/jaws-framework/JAWS) The Serverless Application Framework – Uses bleeding-edge AWS services to redefine how to build massively scalable (and cheap) apps!  
+[AWS Lambda Doc](https://aws.amazon.com/jp/documentation/lambda/)  
+[Amazon API Gateway Doc](https://aws.amazon.com/jp/documentation/apigateway/)  
 
