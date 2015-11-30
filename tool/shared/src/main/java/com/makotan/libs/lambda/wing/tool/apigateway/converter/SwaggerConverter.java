@@ -20,7 +20,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,15 +62,16 @@ public class SwaggerConverter {
             if (typesAnnotatedWith.isEmpty()) {
                 return;
             }
-            ConverterUtils.reduce(typesAnnotatedWith.stream() , either
+
+            ConverterUtils.foldLeft(typesAnnotatedWith.stream() , either
                     ,(swgTypeInEither , type) -> {
                         Either<SwaggerConvertErrors, Swagger> swgTypeOutEither = conv.convert(type, info, swgTypeInEither, context);
                         if (conv.useMethodScan()) {
-                            return ConverterUtils.reduce(methodToSwaggerConverters.stream()
+                            return ConverterUtils.foldLeft(methodToSwaggerConverters.stream()
                                     , swgTypeOutEither
                                     , (swgMethodInEither , mconv) -> {
                                         Set<Method> methods = Arrays.stream(type.getMethods()).filter(m -> m.getAnnotation(mconv.scanAnnotation()) != null).collect(Collectors.toSet());
-                                        return ConverterUtils.reduce(methods.stream() ,
+                                        return ConverterUtils.foldLeft(methods.stream() ,
                                                 swgMethodInEither,
                                                 (swgMethodEither , method) -> {
                                                     return mconv.convert(type,method,info,swgMethodEither,context);

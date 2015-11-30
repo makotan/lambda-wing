@@ -128,7 +128,7 @@ public class ConverterUtils {
         setter.set(val);
     }
 
-    public static <U,T> U reduce(Stream<T> stream , U identity , BiFunction<U, T , U> accumulator) {
+    public static <U,T> U foldLeft(Stream<T> stream , U identity , BiFunction<U, T , U> accumulator) {
         AtomicReference<U> ref = new AtomicReference<>(identity);
         stream.forEach( v -> {
             U u = accumulator.apply(ref.get() , v);
