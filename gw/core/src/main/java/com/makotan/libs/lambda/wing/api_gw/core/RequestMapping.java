@@ -1,34 +1,19 @@
 package com.makotan.libs.lambda.wing.api_gw.core;
 
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by makotan on 2015/11/01.
+ * Created by makotan on 2015/11/20.
  */
-@Repeatable(RequestMappingAnnotation.class)
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@interface RequestMapping {
-    /**
-     * マッピングで使うステータスコード
-     * @return
-     */
-    int statusCode() default 200;
+public @interface RequestMapping {
 
-    /**
-     * コンテンツタイプを文字列で
-     * @return
-     */
-    String contentType() default "application/json";
+    Class<?> requestClass();
 
-    /**
-     * レスポンスをマッピングするための個別テンプレート
-     * 無いときはLambdaの戻りの型情報から自動で作る。作れないときはエラー
-     * @return
-     */
-    String responseMappingTemplate();
+    String description() default "";
+
 }

@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface RequestMappingAnnotation {
-    RequestMapping[] value();
+public @interface RequestBodyMappingAnnotation {
+    RequestBodyMapping[] value();
 }

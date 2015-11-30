@@ -6,10 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by makotan on 2015/11/01.
+ * Created by makotan on 2015/11/20.
  */
-@Target( { ElementType.TYPE, ElementType.METHOD })
+@Target( { ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RestResource {
-    String value();
+public @interface AwsBackend {
+    String uri();
+    String httpMethod();
+    String credentials();
+    String cacheNamespace() default "";
+    String[] cacheKeyParameters() default {};
 }
