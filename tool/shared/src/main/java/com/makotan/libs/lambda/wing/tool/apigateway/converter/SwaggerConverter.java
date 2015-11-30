@@ -2,6 +2,7 @@ package com.makotan.libs.lambda.wing.tool.apigateway.converter;
 
 import com.makotan.libs.lambda.wing.core.util.Either;
 import com.makotan.libs.lambda.wing.tool.apigateway.converter.gwcore.ApiInfoConverter;
+import com.makotan.libs.lambda.wing.tool.apigateway.converter.gwcore.InfoSettingProcessor;
 import com.makotan.libs.lambda.wing.tool.apigateway.converter.gwcore.RestMethodConverter;
 import com.makotan.libs.lambda.wing.tool.apigateway.converter.gwcore.RestResourceConverter;
 import com.makotan.libs.lambda.wing.tool.apigateway.model.SwaggerConvertErrors;
@@ -33,10 +34,13 @@ import java.util.stream.Collectors;
 public class SwaggerConverter {
     Logger log = LoggerFactory.getLogger(getClass());
 
+    List<SwaggerProcessor> preProcessor = new ArrayList<>();
     List<ClassToSwaggerConverter> classToSwaggerConverters = new ArrayList<>();
     List<MethodToSwaggerConverter> methodToSwaggerConverters = new ArrayList<>();
+    List<SwaggerProcessor> afterProcessor = new ArrayList<>();
 
     public SwaggerConverter() {
+        preProcessor.add(new InfoSettingProcessor());
         classToSwaggerConverters.add(new ApiInfoConverter());
         classToSwaggerConverters.add(new RestResourceConverter());
         methodToSwaggerConverters.add(new RestMethodConverter());
@@ -44,7 +48,6 @@ public class SwaggerConverter {
 
     public Either<SwaggerConvertErrors,Swagger> convert(SwaggerConvertInfo info) {
         Swagger swagger = new Swagger();
-        Either<SwaggerConvertErrors,Swagger> either = Either.right(swagger);
         ConvertContext context = new ConvertContext();
 
         Reflections reflections =
@@ -55,15 +58,17 @@ public class SwaggerConverter {
                         .addScanners(new TypeAnnotationsScanner())
                 );
 
+        Either<SwaggerConvertErrors,Swagger> startEither = ConverterUtils.foldLeft(preProcessor.stream() , Either.<SwaggerConvertErrors,Swagger>right(swagger) ,
+                (either, swaggerProcessor) -> swaggerProcessor.processor(info,either,context));
 
-        classToSwaggerConverters.forEach(conv -> {
+        Either<SwaggerConvertErrors,Swagger> convEither = ConverterUtils.foldLeft(classToSwaggerConverters.stream(),startEither,(swaggerEither, conv) -> {
             Class<? extends Annotation> anno = conv.scanAnnotation();
             Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(anno);
             if (typesAnnotatedWith.isEmpty()) {
-                return;
+                return swaggerEither;
             }
 
-            ConverterUtils.foldLeft(typesAnnotatedWith.stream() , either
+            return ConverterUtils.foldLeft(typesAnnotatedWith.stream() , swaggerEither
                     ,(swgTypeInEither , type) -> {
                         Either<SwaggerConvertErrors, Swagger> swgTypeOutEither = conv.convert(type, info, swgTypeInEither, context);
                         if (conv.useMethodScan()) {
@@ -81,8 +86,10 @@ public class SwaggerConverter {
                             return swgTypeOutEither;
                         }
                     });
-        });
-        return Either.right(swagger);
+                });
+
+        return ConverterUtils.foldLeft(afterProcessor.stream() , convEither ,
+                (either, swaggerProcessor) -> swaggerProcessor.processor(info,either,context));
     }
 
     public void outputFile(Swagger swagger , File swaggerFile) throws IOException {
