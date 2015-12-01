@@ -16,7 +16,7 @@ Special thanks [JAWS](https://github.com/jaws-framework/JAWS)
 - Issue管理はgithubを利用する
 - MLは用意しない。とりあえずgitter
 - 残すべきと思った情報はWiki/ソースコード/このファイル/EvernoteのProject bookのどれかに残す。とりあえずgitterにメモしてから転記も可
-- パッケージ名は仮に `com.makotan.tool.lambda.wing` にする。そのうち変わる予定
+- パッケージ名は `org.lambda_wing`
 - テストは機能を網羅出来るようになるべく書く。ただしサンプルは任意
 - 質問などがあれば、とりあえずgitterへ
 
