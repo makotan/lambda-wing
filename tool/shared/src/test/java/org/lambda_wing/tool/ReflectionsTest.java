@@ -25,7 +25,7 @@ public class ReflectionsTest {
                 new Reflections(new ConfigurationBuilder()
                         .addClassLoader(getClass().getClassLoader())
                         .filterInputsBy(name -> name.startsWith("org.lambda_wing.tool"))
-                        .forPackages("org.lambda_Wing.tool")
+                        .forPackages("org.lambda_wing.tool")
                         .addScanners(new MethodAnnotationsScanner())
                 );
         Set<Method> methodSet = reflections.getMethodsAnnotatedWith(LambdaHandler.class);
@@ -49,8 +49,8 @@ public class ReflectionsTest {
                         .addUrls(url)
                         //.addClassLoader(URLClassLoader.newInstance(new URL[]{url}))
                         //.addClassLoader(getClass().getClassLoader())
-                        .filterInputsBy(name -> name.startsWith("org.lambda_Wing.sample1"))
-                        .forPackages("org.lambda_Wing.sample1")
+                        .filterInputsBy(name -> name.startsWith("org.lambda_wing.sample1"))
+                        .forPackages("org.lambda_wing.sample1")
                         .addScanners(new MethodAnnotationsScanner())
                 );
         Set<Method> methodSet = reflections.getMethodsAnnotatedWith(LambdaHandler.class);
@@ -62,7 +62,7 @@ public class ReflectionsTest {
         System.out.println(method.getReturnType());
 
         HandlerFinder handlerFinder = new HandlerFinder();
-        Set<Method> methods = handlerFinder.find(url, "org.lambda_Wing.sample1");
+        Set<Method> methods = handlerFinder.find(url, "org.lambda_wing.sample1");
         System.out.println(methods);
     }
 
