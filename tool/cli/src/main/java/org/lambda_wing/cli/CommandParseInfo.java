@@ -95,7 +95,7 @@ public class CommandParseInfo {
                 }
             }
             if (!hit) {
-                return Either.left(new CliParseError());
+                return createCliParseError("unknown option " + co.getParam() , result);
             }
         }
         return Either.right(result);
@@ -105,12 +105,13 @@ public class CommandParseInfo {
         if (resultEither.isLeft()) {
             return resultEither;
         }
-        if (resultEither.getRight().commands.isEmpty()) {
-            resultEither.getRight().commands.add(root);
+        CommandResult commandResult = resultEither.getRight();
+        if (commandResult.commands.isEmpty()) {
+            commandResult.commands.add(root);
         }
         String arg = args.peek();
         if (arg == null) {
-            if (resultEither.getRight().commands.size() == 1) {
+            if (commandResult.commands.size() == 1) {
                 return createParseError(current , "");
             }
             return resultEither;
@@ -120,10 +121,13 @@ public class CommandParseInfo {
         if (arg.startsWith("-")) {
 
             int size = args.size();
-            parseOption(arg , current, args,resultEither);
+            parseOption(arg, current, args, resultEither);
             if (size == args.size()) {
-                return Either.left(new CliParseError());
+                return createCliParseError("unknown option " + arg, commandResult);
             }
+            return parse(current, args, resultEither);
+        } else if (current instanceof CliExecCommand) {
+            commandResult.args.add(args.poll());
             return parse(current, args,resultEither);
         } else {
             args.poll();
@@ -132,7 +136,7 @@ public class CommandParseInfo {
                     .filter(ct -> ct.nextCliCommand.isCommand(arg))
                     .findFirst();
             if (trasition.isPresent()) {
-                resultEither.getRight().commands.add(trasition.get().nextCliCommand);
+                commandResult.commands.add(trasition.get().nextCliCommand);
                 return parse(trasition.get().nextCliCommand, args,resultEither);
             } else {
                 // usage回収retun
@@ -164,7 +168,7 @@ public class CommandParseInfo {
                 List<CommandTrasition> nextTrasitionList = getNextTrasitionList(current);
                 parseChildOption(arg , nextTrasitionList, args,commandResult,size);
                 if (size == args.size()) {
-                    return Either.left(new CliParseError());
+                    return createCliParseError("unknown option " + arg , commandResult );
                 }
             }
         }
@@ -184,7 +188,20 @@ public class CommandParseInfo {
             });
             parseChildOption(arg , getNextTrasitionList(ct.nextCliCommand), args,commandResult,size);
         });
-        return Either.left(new CliParseError());
+        return createCliParseError("unknown option " + arg , commandResult );
+    }
+
+    Either<CliParseError,CommandResult> createCliParseError(String message , CommandResult commandResult , String ... args) {
+        CliParseError parseError = new CliParseError();
+        StringBuilder sb = new StringBuilder(message);
+        sb.append("\n").append(Arrays.toString(args));
+        commandResult.commands.forEach(cliCommand -> {
+            sb.append(cliCommand.getCommand());
+            parseError.usages.addAll(cliCommand.getUsageList());
+        });
+        parseError.message = sb.toString();
+        return Either.left(parseError);
+
     }
 
     Either<CliParseError,CommandResult> createParseError(CliCommand current , String message) {

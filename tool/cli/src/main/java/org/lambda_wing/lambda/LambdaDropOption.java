@@ -1,12 +1,18 @@
 package org.lambda_wing.lambda;
 
 
+import org.lambda_wing.cli.AbstractCliCommand;
+
 import java.io.File;
 
 /**
  * Created by makotan on 2015/11/30.
  */
-public class LambdaDropOption {
+public class LambdaDropOption extends AbstractCliCommand {
+
+    public LambdaDropOption() {
+        super("drop");
+    }
 /*
     public CliOptions baseOption;
 

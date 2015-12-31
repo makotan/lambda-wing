@@ -9,5 +9,30 @@ import java.util.List;
 public class CommandResult {
     List<CliCommand> commands = new ArrayList<>();
     List<CommandOption> commandOptions = new ArrayList<>();
-    String[] arg;
+    List<String> args = new ArrayList<>();
+
+    public List<CliCommand> getCommands() {
+        return commands;
+    }
+
+    public void setCommands(List<CliCommand> commands) {
+        this.commands = commands;
+    }
+
+    public List<CommandOption> getCommandOptions() {
+        return commandOptions;
+    }
+
+    public void setCommandOptions(List<CommandOption> commandOptions) {
+        this.commandOptions = commandOptions;
+    }
+
+    public List<String> getArgs() {
+        return args;
+    }
+
+    public void setArgs(List<String> args) {
+        this.args = args;
+    }
 }
+

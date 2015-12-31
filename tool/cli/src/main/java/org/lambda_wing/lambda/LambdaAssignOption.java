@@ -1,10 +1,17 @@
 package org.lambda_wing.lambda;
 
 
+import org.lambda_wing.cli.AbstractCliCommand;
+
 /**
  * Created by makotan on 2015/11/30.
  */
-public class LambdaAssignOption  {
+public class LambdaAssignOption extends AbstractCliCommand {
+
+    public LambdaAssignOption() {
+        super("assign");
+    }
+
 /*
     public CliOptions baseOption;
 

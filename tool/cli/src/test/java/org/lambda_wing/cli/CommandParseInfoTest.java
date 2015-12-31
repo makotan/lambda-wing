@@ -23,13 +23,13 @@ public class CommandParseInfoTest {
         }
     }
 
-    public static class LambdaDeployCommand extends AbstractCliCommand {
+    public static class LambdaDeployCommand extends AbstractCliCommand implements CliExecCommand {
         public LambdaDeployCommand() {
             super("deploy");
         }
     }
 
-    public static class LambdaDropCommand extends AbstractCliCommand {
+    public static class LambdaDropCommand extends AbstractCliCommand implements CliExecCommand {
         public LambdaDropCommand() {
             super("drop");
         }
@@ -159,6 +159,15 @@ public class CommandParseInfoTest {
         Either<CliParseError, CommandResult> parseResult = info.parse(args);
 
         assertTrue(parseResult.isLeft());
+    }
+
+    @Test
+    public void DeployArgmentsParseTest() {
+        String[] args = { "lambda",  "deploy" , "hoge.jar" ,  "org.lambda_wing.sample1.one"};
+        Either<CliParseError, CommandResult> parseResult = info.parse(args);
+
+        assertTrue(parseResult.isRight());
+        assertThat(parseResult.getRight().args.size() , is(2));
     }
 
 }
