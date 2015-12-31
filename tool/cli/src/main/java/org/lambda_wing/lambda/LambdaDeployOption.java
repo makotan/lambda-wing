@@ -2,16 +2,45 @@ package org.lambda_wing.lambda;
 
 
 import org.lambda_wing.cli.AbstractCliCommand;
+import org.lambda_wing.cli.CliExecCommand;
+import org.lambda_wing.cli.CliParseError;
+import org.lambda_wing.cli.CommandResult;
+import org.lambda_wing.cli.OptionParser;
+import org.lambda_wing.lambda.core.util.Either;
 
 import java.io.File;
 
 /**
  * Created by makotan on 2015/11/30.
  */
-public class LambdaDeployOption extends AbstractCliCommand {
+public class LambdaDeployOption extends AbstractCliCommand  implements CliExecCommand {
 
     public LambdaDeployOption() {
         super("deploy");
+        /*
+        add(new OptionParser.SimpleOptionParser("--path" , true));
+        add(new OptionParser.SimpleOptionParser("--role" , true));
+        add(new OptionParser.SimpleOptionParser("--s3Bucket" , true));
+        add(new OptionParser.SimpleOptionParser("--s3Key" , true));
+        add(new OptionParser.SimpleOptionParser("--basePackage" , true));
+        */
+
+        add(new OptionParser.SimpleOptionParser("--region" , true));
+        add(new OptionParser.SimpleOptionParser("--publishVersion" , false));
+        add(new OptionParser.SimpleOptionParser("--aliasName" , true));
+        add(new OptionParser.SimpleOptionParser("--outputJson" , true));
+        add(new OptionParser.SimpleOptionParser("--outputDump" , true));
+
+    }
+
+    @Override
+    public Either<CliParseError, CommandResult> validate(CommandResult commandResult) {
+        return Either.right(commandResult);
+    }
+
+    @Override
+    public void execute(CommandResult commandResult) {
+
     }
 
 /*

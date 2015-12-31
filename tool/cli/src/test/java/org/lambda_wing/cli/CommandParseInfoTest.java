@@ -27,11 +27,31 @@ public class CommandParseInfoTest {
         public LambdaDeployCommand() {
             super("deploy");
         }
+
+        @Override
+        public Either<CliParseError, CommandResult> validate(CommandResult commandResult) {
+            return Either.right(commandResult);
+        }
+
+        @Override
+        public void execute(CommandResult commandResult) {
+
+        }
     }
 
     public static class LambdaDropCommand extends AbstractCliCommand implements CliExecCommand {
         public LambdaDropCommand() {
             super("drop");
+        }
+
+        @Override
+        public Either<CliParseError, CommandResult> validate(CommandResult commandResult) {
+            return Either.right(commandResult);
+        }
+
+        @Override
+        public void execute(CommandResult commandResult) {
+
         }
     }
 

@@ -20,8 +20,18 @@ public class AbstractCliCommand implements CliCommand {
         return parsers;
     }
 
+    public List<OptionParser> add(OptionParser parser) {
+        parsers.add(parser);
+        return parsers;
+    }
+
     @Override
     public List<CliUsage> getUsageList() {
+        return usages;
+    }
+
+    public List<CliUsage> add(CliUsage usage) {
+        usages.add(usage);
         return usages;
     }
 

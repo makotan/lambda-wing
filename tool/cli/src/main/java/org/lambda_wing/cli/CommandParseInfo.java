@@ -31,28 +31,10 @@ public class CommandParseInfo {
         return this;
     }
 
-    public static class RootCliCommand implements CliCommand {
-        final List<OptionParser> rootOptionParserList = new ArrayList<>();
-        final List<CliUsage> rootCliUsageList = new ArrayList<>();
+    public static class RootCliCommand extends AbstractCliCommand {
 
-        @Override
-        public List<OptionParser> getOptionParserList() {
-            return rootOptionParserList;
-        }
-
-        @Override
-        public List<CliUsage> getUsageList() {
-            return rootCliUsageList;
-        }
-
-        @Override
-        public boolean isCommand(String arg) {
-            return arg != null && arg.isEmpty(); // cli的にはヒットさせない
-        }
-
-        @Override
-        public String getCommand() {
-            return "";
+        public RootCliCommand() {
+            super("");
         }
 
         @Override
@@ -78,7 +60,17 @@ public class CommandParseInfo {
     public Either<CliParseError,CommandResult> parse(String[] args) {
         Either<CliParseError, CommandResult> parse = parse(root, new LinkedList<String>(Arrays.asList(args)), Either.right(new CommandResult()));
         if (parse.isRight()) {
-            return validateParse(parse.getRight());
+            parse = validateParse(parse.getRight());
+
+            if (parse.isRight()) {
+                CommandResult commandResult = parse.getRight();
+                CliCommand cliCommand = commandResult.commands.get(commandResult.commands.size() - 1);
+                if (cliCommand instanceof CliExecCommand) {
+                    return ((CliExecCommand)cliCommand).validate(commandResult);
+                }
+            }
+            return parse;
+
         } else {
             return parse;
         }

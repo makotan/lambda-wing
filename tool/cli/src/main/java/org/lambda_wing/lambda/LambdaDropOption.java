@@ -2,16 +2,30 @@ package org.lambda_wing.lambda;
 
 
 import org.lambda_wing.cli.AbstractCliCommand;
+import org.lambda_wing.cli.CliExecCommand;
+import org.lambda_wing.cli.CliParseError;
+import org.lambda_wing.cli.CommandResult;
+import org.lambda_wing.lambda.core.util.Either;
 
 import java.io.File;
 
 /**
  * Created by makotan on 2015/11/30.
  */
-public class LambdaDropOption extends AbstractCliCommand {
+public class LambdaDropOption extends AbstractCliCommand  implements CliExecCommand {
 
     public LambdaDropOption() {
         super("drop");
+    }
+
+    @Override
+    public Either<CliParseError, CommandResult> validate(CommandResult commandResult) {
+        return Either.right(commandResult);
+    }
+
+    @Override
+    public void execute(CommandResult commandResult) {
+
     }
 /*
     public CliOptions baseOption;

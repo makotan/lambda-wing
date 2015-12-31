@@ -2,14 +2,29 @@ package org.lambda_wing.lambda;
 
 
 import org.lambda_wing.cli.AbstractCliCommand;
+import org.lambda_wing.cli.CliExecCommand;
+import org.lambda_wing.cli.CliParseError;
+import org.lambda_wing.cli.CommandResult;
+import org.lambda_wing.cli.OptionParser;
+import org.lambda_wing.lambda.core.util.Either;
 
 /**
  * Created by makotan on 2015/11/30.
  */
-public class LambdaAssignOption extends AbstractCliCommand {
+public class LambdaAssignOption extends AbstractCliCommand implements CliExecCommand {
 
     public LambdaAssignOption() {
         super("assign");
+    }
+
+    @Override
+    public Either<CliParseError, CommandResult> validate(CommandResult commandResult) {
+        return Either.right(commandResult);
+    }
+
+    @Override
+    public void execute(CommandResult commandResult) {
+
     }
 
 /*
