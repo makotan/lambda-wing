@@ -1,24 +1,17 @@
 package org.lambda_wing.lambda;
 
-import org.lambda_wing.AbstractCliOptions;
-import org.lambda_wing.CliOptions;
-import org.kohsuke.args4j.Option;
 
 import java.io.File;
 
 /**
  * Created by makotan on 2015/11/30.
  */
-public class LambdaDropOption extends AbstractCliOptions<LambdaDropOption> {
-    @Option(name = "--service", aliases = "-s" , usage = "select target service" , required = true)
-    public CliOptions.Service service;
-
-    @Option(name = "--profile" , aliases = "-p" , usage = "credentials profile")
-    public String profile;
-
+public class LambdaDropOption {
+/*
+    public CliOptions baseOption;
 
     @Option(name = "--action", aliases = "-a" , usage = "select service action" , required = true)
-    public LambdaBasicOption.Action action;
+    public LambdaAction action;
 
     @Option(name = "--region" , usage = "lambda deploy region")
     public String region;
@@ -28,7 +21,20 @@ public class LambdaDropOption extends AbstractCliOptions<LambdaDropOption> {
     public File inputDump;
 
     @Override
-    protected LambdaDropOption create() {
-        return new LambdaDropOption();
+    public void execute(CliOptions options, String... args) throws CmdLineException {
+        baseOption = options;
+        new CmdLineParser(this).parseArgument(args);
+        System.out.println(this);
     }
+
+    @Override
+    public String toString() {
+        return "LambdaDropOption{" +
+                "baseOption=" + baseOption +
+                ", action=" + action +
+                ", region='" + region + '\'' +
+                ", inputDump=" + inputDump +
+                '}';
+    }
+    */
 }

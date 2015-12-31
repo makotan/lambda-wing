@@ -1,27 +1,15 @@
 package org.lambda_wing.lambda;
 
-import org.lambda_wing.AbstractCliOptions;
-import org.lambda_wing.CliOptions;
-import org.kohsuke.args4j.Option;
 
 import java.io.File;
 
 /**
  * Created by makotan on 2015/11/30.
  */
-public class LambdaDeployOption extends AbstractCliOptions<LambdaDeployOption> {
+public class LambdaDeployOption  {
 
-
-    @Option(name = "--service", aliases = "-s" , usage = "select target service" , required = true)
-    public CliOptions.Service service;
-
-    @Option(name = "--profile" , aliases = "-p" , usage = "credentials profile")
-    public String profile;
-
-
-    @Option(name = "--action", aliases = "-a" , usage = "select service action" , required = true)
-    public LambdaBasicOption.Action action;
-
+/*
+    public CliOptions baseOption;
 
     @Option(name = "--path" , usage = "deploy jar path" , required = true)
     public File jarPath;
@@ -45,8 +33,29 @@ public class LambdaDeployOption extends AbstractCliOptions<LambdaDeployOption> {
     @Option(name = "--outputDump" , usage = "function result output dump file")
     public File outputDump;
 
+
     @Override
-    protected LambdaDeployOption create() {
-        return new LambdaDeployOption();
+    public void execute(CliOptions options, String... args) throws CmdLineException {
+        baseOption = options;
+        new CmdLineParser(this).parseArgument(args);
+        System.out.println(this);
     }
+
+    @Override
+    public String toString() {
+        return "LambdaDeployOption{" +
+                "baseOption=" + baseOption +
+                ", jarPath=" + jarPath +
+                ", region='" + region + '\'' +
+                ", role='" + role + '\'' +
+                ", s3Bucket='" + s3Bucket + '\'' +
+                ", s3Key='" + s3Key + '\'' +
+                ", publishVersion=" + publishVersion +
+                ", basePackage='" + basePackage + '\'' +
+                ", aliasName='" + aliasName + '\'' +
+                ", outputJson=" + outputJson +
+                ", outputDump=" + outputDump +
+                '}';
+    }
+    */
 }

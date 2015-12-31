@@ -1,32 +1,21 @@
 package org.lambda_wing.lambda;
 
-import org.lambda_wing.AbstractCliOptions;
-import org.lambda_wing.CliOptions;
-import org.kohsuke.args4j.Option;
 
 /**
  * Created by makotan on 2015/11/30.
  */
-public class LambdaBasicOption extends AbstractCliOptions<LambdaBasicOption> {
+public class LambdaBasicOption {
 
-    @Override
-    protected LambdaBasicOption create() {
-        return new LambdaBasicOption();
-    }
+    /*
+    @Argument(index=0, handler = SubCommandHandler.class , required = true , usage = "lambda action ")
+    @SubCommands({
+            @SubCommand(name = "assign", impl = LambdaAssignOption.class),
+            @SubCommand(name = "deploy", impl = LambdaDeployOption.class),
+            @SubCommand(name = "drop", impl = LambdaDropOption.class)
+    })
+    public LambdaAction action;
 
-    public enum Action {
-        deploy,
-        assign,
-        drop
-    }
-
-    @Option(name = "--service", aliases = "-s" , usage = "select target service" , required = true)
-    public CliOptions.Service service;
-
-    @Option(name = "--profile" , aliases = "-p" , usage = "credentials profile")
-    public String profile = "default";
-
-    @Option(name = "--action", aliases = "-a" , usage = "select service action" , required = true)
-    public Action action;
-
+    @Argument(index=1, metaVar="sub options", handler=StringArrayOptionHandler.class)
+    public String[] arguments;
+*/
 }

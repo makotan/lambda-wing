@@ -1,23 +1,12 @@
 package org.lambda_wing.lambda;
 
-import org.lambda_wing.AbstractCliOptions;
-import org.lambda_wing.CliOptions;
-import org.kohsuke.args4j.Option;
-
-import java.io.File;
 
 /**
  * Created by makotan on 2015/11/30.
  */
-public class LambdaAssignOption extends AbstractCliOptions<LambdaAssignOption> {
-    @Option(name = "--service", aliases = "-s" , usage = "select target service" , required = true)
-    public CliOptions.Service service;
-
-    @Option(name = "--profile" , aliases = "-p" , usage = "credentials profile")
-    public String profile;
-
-    @Option(name = "--action", aliases = "-a" , usage = "select service action" , required = true)
-    public LambdaBasicOption.Action action;
+public class LambdaAssignOption  {
+/*
+    public CliOptions baseOption;
 
     @Option(name = "--region" , usage = "lambda deploy region")
     public String region;
@@ -31,8 +20,24 @@ public class LambdaAssignOption extends AbstractCliOptions<LambdaAssignOption> {
     @Option(name = "--outputDump" , usage = "function result output dump file")
     public File outputDump;
 
+
     @Override
-    protected LambdaAssignOption create() {
-        return new LambdaAssignOption();
+    public void execute(CliOptions options, String... args) throws CmdLineException {
+        baseOption = options;
+        CmdLineParser cmdLineParser = new CmdLineParser(this);
+        cmdLineParser.parseArgument(options.arguments);
+        System.out.println(this);
     }
+
+    @Override
+    public String toString() {
+        return "LambdaAssignOption{" +
+                "baseOption=" + baseOption +
+                ", region='" + region + '\'' +
+                ", aliasName='" + aliasName + '\'' +
+                ", inputDump=" + inputDump +
+                ", outputDump=" + outputDump +
+                '}';
+    }
+    */
 }
